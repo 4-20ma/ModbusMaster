@@ -81,7 +81,6 @@ class ModbusMaster
   // user-accessible "public" interface
   public:
     ModbusMaster(void);
-    ModbusMaster(uint16_t u16BaudRate);
     void begin(void);
     void begin(uint16_t u16BaudRate);
     
@@ -119,6 +118,7 @@ class ModbusMaster
 
 /*
 || @changelog
+|| | 2010-01-24 - Doc Walker : remove function ModbusMaster(uint16_t u16BaudRate)
 || | 2010-01-24 - Doc Walker : Initial Release
 || #
 */
