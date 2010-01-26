@@ -1,8 +1,38 @@
 /*
-  ModbusMaster.h - library implementing a Modbus Master for Arduino
+  ModbusMaster.h - library implementing a Modbus RTU Master for Arduino
+  
   Written by Doc Walker (Rx)
-  Copyright (c) 2009-2010 WVFans.net
-  All rights reserved.
+  Copyright © 2009, 2010 Doc Walker
+  
+  This file is part of ModbusMaster.
+  
+  ModbusMaster is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  ModbusMaster is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
+  This file is part of ModbusMaster.
+  
+  ModbusMaster is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  ModbusMaster is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
+  
 */
 
 // ensure this library description is only included once
