@@ -4,6 +4,11 @@
   Written by Doc Walker (Rx)
   Copyright © 2009, 2010 Doc Walker
   
+  $Author: $
+  $Date: $
+  $Id: $
+  $Rev: $
+  
   This file is part of ModbusMaster.
   
   ModbusMaster is free software: you can redistribute it and/or modify
@@ -33,7 +38,7 @@
   You should have received a copy of the GNU General Public License
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
-*/
+  */
 
 // ensure this library description is only included once
 #ifndef ModbusMaster_h
@@ -103,6 +108,13 @@ const uint8_t ku8MBInvalidCRC                 = 0xE6;
 // Modbus timeout [milliseconds]
 const uint8_t ku8MBResponseTimeout            = 200;
 
+// Modbus exception codes
+enum eStatus_t {kMBIllegalFunction = 0x01, kMBIllegalDataAddress = 0x02,
+  kMBIllegalDataValue = 0x03, kMBSlaveDeviceFailure = 0x04,
+  kMBSuccess = 0x00, kMBInvalidRequestADUSize = 0xE1,
+  kMBInvalidResponseADUSize  = 0xE2, kMBInvalidSlaveID = 0xE3,
+  kMBInvalidFunction = 0xE4, kMBResponseTimedOut = 0xE5,
+  kMBInvalidCRC = 0xE6};
 
 /* _____CLASS DEFINITIONS____________________________________________________ */
 // library interface description
@@ -111,44 +123,47 @@ class ModbusMaster
   // user-accessible "public" interface
   public:
     ModbusMaster(void);
+    ModbusMaster(uint8_t u8MBSlave);
     void begin(void);
     void begin(uint16_t u16BaudRate);
     
-    uint8_t u8ReadCoils(uint8_t u8MBSlave, uint16_t u16ReadAddress,
-      uint16_t u16BitQty, uint16_t *u16ReadRegister);
-    uint8_t u8ReadDiscreteInputs(uint8_t u8MBSlave, uint16_t u16ReadAddress,
-      uint16_t u16BitQty, uint16_t *u16ReadRegister);
-    uint8_t u8ReadHoldingRegisters(uint8_t u8MBSlave, uint16_t u16ReadAddress,
-      uint16_t u16QtyRead, uint16_t *u16ReadRegister);
-    uint8_t u8ReadInputRegisters(uint8_t u8MBSlave, uint16_t u16ReadAddress,
-      uint8_t u16QtyRead, uint16_t *u16ReadRegister);
-    uint8_t u8WriteSingleCoil(uint8_t u8MBSlave, uint16_t u16WriteAddress,
-      uint8_t u8State);
-    uint8_t u8WriteSingleRegister(uint8_t u8MBSlave, uint16_t u16WriteAddress,
-      uint16_t u16WriteValue);
-    uint8_t u8WriteMultipleCoils(uint8_t u8MBSlave, uint16_t u16WriteAddress,
-      uint16_t u16BitQty, uint16_t *u16WriteRegister);
-    uint8_t u8WriteMultipleRegisters(uint8_t u8MBSlave, uint16_t u16WriteAddress,
-      uint16_t u16QtyWrite, uint16_t *u16WriteRegister);
-    uint8_t u8MaskWriteRegister(uint8_t u8MBSlave, uint16_t u16WriteAddress,
-      uint16_t u16AndMask, uint16_t u16OrMask);
-    uint8_t u8ReadWriteMultipleRegisters(uint8_t u8MBSlave,
-      uint16_t u16ReadAddress, uint16_t u16QtyRead, uint16_t *u16ReadRegister,
-      uint16_t u16WriteAddress, uint16_t u16QtyWrite, uint16_t *u16WriteRegister);
+    eStatus_t ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty,
+      uint16_t *u16ReadRegister);
+    eStatus_t ReadDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty,
+      uint16_t *u16ReadRegister);
+    eStatus_t ReadHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16QtyRead,
+      uint16_t *u16ReadRegister);
+    eStatus_t ReadInputRegisters(uint16_t u16ReadAddress, uint8_t u16QtyRead,
+      uint16_t *u16ReadRegister);
+    eStatus_t WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State);
+    eStatus_t WriteSingleRegister(uint16_t u16WriteAddress, uint16_t u16WriteValue);
+    eStatus_t WriteMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty,
+      uint16_t *u16WriteRegister);
+    eStatus_t WriteMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16QtyWrite,
+      uint16_t *u16WriteRegister);
+    eStatus_t MaskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask,
+      uint16_t u16OrMask);
+    eStatus_t ReadWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16QtyRead,
+      uint16_t *u16ReadRegister, uint16_t u16WriteAddress, uint16_t u16QtyWrite,
+      uint16_t *u16WriteRegister);
     
   // library-accessible "private" interface
   private:
+    uint8_t _u8MBSlave;
     uint16_t _u16BaudRate;
-    uint8_t u8ModbusMaster(uint8_t u8MBSlave, uint8_t u8MBFunction,
-      uint16_t u16ReadAddress, uint16_t u16QtyRead, uint16_t *u16ReadRegister,
-      uint16_t u16WriteAddress, uint16_t u16QtyWrite, uint16_t *u16WriteRegister);
+    
+    // Modbus timeout [milliseconds]
+    uint8_t _u8MBResponseTimeout;
+    
+    // Modbus function codes for bit access
+    enum eMBFunction_t {kMBReadCoils = 0x01, kMBReadDiscreteInputs = 0x02,
+      kMBWriteSingleCoil = 0x05, kMBWriteMultipleCoils = 0x0F,
+      kMBReadHoldingRegisters = 0x03, kMBReadInputRegisters = 0x04,
+      kMBWriteSingleRegister = 0x06, kMBWriteMultipleRegisters = 0x10,
+      kMBMaskWriteRegister = 0x16, kMBReadWriteMultipleRegisters = 0x17};
+
+    eStatus_t ModbusMasterTransaction(eMBFunction_t eMBFunction, uint16_t u16ReadAddress,
+      uint16_t u16QtyRead, uint16_t *u16ReadRegister, uint16_t u16WriteAddress,
+      uint16_t u16QtyWrite, uint16_t *u16WriteRegister);
 };
 #endif
-
-
-/*
-|| @changelog
-|| | 2010-01-24 - Doc Walker : remove function ModbusMaster(uint16_t u16BaudRate)
-|| | 2010-01-24 - Doc Walker : Initial Release
-|| #
-*/
