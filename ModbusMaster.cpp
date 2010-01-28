@@ -4,9 +4,9 @@
   Written by Doc Walker (Rx)
   Copyright © 2009, 2010 Doc Walker
   
-  $Author: $
-  $Date: $
-  $Id: $
+  $Author$
+  $Date$
+  $Id$
   $Rev$
   
   This file is part of ModbusMaster.
