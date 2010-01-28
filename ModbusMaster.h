@@ -7,7 +7,7 @@
   $Author: $
   $Date: $
   $Id: $
-  $Rev: $
+  $Rev$
   
   This file is part of ModbusMaster.
   
