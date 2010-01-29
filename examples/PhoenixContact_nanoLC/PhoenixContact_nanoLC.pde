@@ -20,76 +20,74 @@
 // analog input registers
 #define NANO_AI(n)   (0x0000 + 2 * n)
 
-// instantiate ModbusMaster object
-ModbusMaster rs485;
+// instantiate ModbusMaster object as slave ID 1
+ModbusMaster nanoLC(1);
 
 
 void setup()
 {
   // initialize Modbus communication baud rate
-  rs485.begin(19200);
+  nanoLC.begin(19200);
 }
 
 
 void loop()
 {
-  static uint8_t u8NanoLC = 1;
   static uint32_t u32ShiftRegister;
   static uint32_t i;
-  static uint16_t u16DataIn[64];
-  static uint16_t u16DataOut[64];
   uint8_t result;
   
   u32ShiftRegister = ((u32ShiftRegister < 0x01000000) ? (u32ShiftRegister << 4) : 1);
   if (u32ShiftRegister == 0) u32ShiftRegister = 1;
   i++;
   
-  u16DataOut[0] = lowWord(u32ShiftRegister);
-  u16DataOut[1] = highWord(u32ShiftRegister);
-  u16DataOut[2] = lowWord(i);
-  u16DataOut[3] = highWord(i);
+  nanoLC.SetRegister(0, lowWord(u32ShiftRegister));
+  nanoLC.SetRegister(1, highWord(u32ShiftRegister));
+  nanoLC.SetRegister(2, lowWord(i));
+  nanoLC.SetRegister(3, highWord(i));
   
-  // write u16DataOut to (4) 16-bit registers starting at NANO_REG(1)
-  // read (4) 16-bit registers starting at NANO_REG(0) to u16DataIn
-  rs485.u8ReadWriteMultipleRegisters(u8NanoLC, NANO_REG(0), 4, u16DataIn, NANO_REG(1), 4, u16DataOut);
+  // write to (4) 16-bit registers starting at NANO_REG(1)
+  // read (4) 16-bit registers starting at NANO_REG(0)
+  nanoLC.ReadWriteMultipleRegisters(NANO_REG(0), 4, NANO_REG(1), 4);
   
   // write lowWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3)
-  rs485.u8WriteSingleRegister(u8NanoLC, NANO_REG(3), lowWord(u32ShiftRegister));
+  nanoLC.WriteSingleRegister(NANO_REG(3), lowWord(u32ShiftRegister));
   
   // write highWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3) + 1
-  rs485.u8WriteSingleRegister(u8NanoLC, NANO_REG(3) + 1, highWord(u32ShiftRegister));
+  nanoLC.WriteSingleRegister(NANO_REG(3) + 1, highWord(u32ShiftRegister));
   
-  // write u16DataIn to (2) 16-bit registers starting at NANO_REG(4)
-  rs485.u8WriteMultipleRegisters(u8NanoLC, NANO_REG(4), 2, u16DataIn);
+  // write to (2) 16-bit registers starting at NANO_REG(4)
+  nanoLC.SetRegister(0, nanoLC.GetRegister(0));
+  nanoLC.SetRegister(1, nanoLC.GetRegister(1));
+  nanoLC.WriteMultipleRegisters(NANO_REG(4), 2);
   
-  // read 17 coils starting at NANO_FLAG(0) to u16DataIn
-  rs485.u8ReadCoils(u8NanoLC, NANO_FLAG(0), 17, u16DataIn);
+  // read 17 coils starting at NANO_FLAG(0)
+  nanoLC.ReadCoils(NANO_FLAG(0), 17);
   
-  // read (66) 16-bit registers starting at NANO_REG(0) to u16DataIn
+  // read (66) 16-bit registers starting at NANO_REG(0)
   // generates Modbus exception ku8MBIllegalDataAddress (0x02)
-  result = rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_REG(0), 66, u16DataIn);
-  if (result == ku8MBIllegalDataAddress)
+  result = nanoLC.ReadHoldingRegisters(NANO_REG(0), 66);
+  if (result == nanoLC.ku8MBIllegalDataAddress)
   {
-    // read (64) 16-bit registers starting at NANO_REG(0) to u16DataIn
-    result = rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_REG(0), 64, u16DataIn);
+    // read (64) 16-bit registers starting at NANO_REG(0)
+    result = nanoLC.ReadHoldingRegisters(NANO_REG(0), 64);
   }
   
-  // read (8) 16-bit registers starting at NANO_AO(0) to u16DataIn
-  rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_AO(0), 8, u16DataIn);
+  // read (8) 16-bit registers starting at NANO_AO(0)
+  nanoLC.ReadHoldingRegisters(NANO_AO(0), 8);
   
-  // read (64) 16-bit registers starting at NANO_TCP(0) to u16DataIn
-  rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_TCP(0), 64, u16DataIn);
+  // read (64) 16-bit registers starting at NANO_TCP(0)
+  nanoLC.ReadHoldingRegisters(NANO_TCP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTP(0) to u16DataIn
-  rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_OTP(0), 64, u16DataIn);
+  // read (64) 16-bit registers starting at NANO_OTP(0)
+  nanoLC.ReadHoldingRegisters(NANO_OTP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_TCA(0) to u16DataIn
-  rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_TCA(0), 64, u16DataIn);
+  // read (64) 16-bit registers starting at NANO_TCA(0)
+  nanoLC.ReadHoldingRegisters(NANO_TCA(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTA(0) to u16DataIn
-  rs485.u8ReadHoldingRegisters(u8NanoLC, NANO_OTA(0), 64, u16DataIn);
+  // read (64) 16-bit registers starting at NANO_OTA(0)
+  nanoLC.ReadHoldingRegisters(NANO_OTA(0), 64);
   
-  // read (8) 16-bit registers starting at NANO_AI(0) to u16DataIn
-  rs485.u8ReadInputRegisters(u8NanoLC, NANO_AI(0), 8, u16DataIn);
+  // read (8) 16-bit registers starting at NANO_AI(0)
+  nanoLC.ReadInputRegisters(NANO_AI(0), 8);
 }
-

@@ -114,6 +114,7 @@ uint8_t ModbusMaster::WriteSingleRegister(uint16_t u16WriteAddress,
   uint16_t u16WriteValue)
 {
   _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = 0;
   _u16WriteRegister[0] = u16WriteValue;
   return ModbusMasterTransaction(ku8MBWriteSingleRegister);
 }
@@ -230,8 +231,8 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       break;
       
     case ku8MBWriteSingleRegister:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[lowByte(_u16WriteQty)]);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[lowByte(_u16WriteQty)]);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[0]);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[0]);
       break;
       
     case ku8MBWriteMultipleCoils:
