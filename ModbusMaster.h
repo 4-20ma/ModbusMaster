@@ -17,17 +17,17 @@
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009, 2010 Doc Walker
+  Copyright © 2009, 2010 Doc Walker <dfwmountaineers at gmail dot com>
   $Id$
   
 */
 
   
-#ifndef __MODBUS_MASTER_H__
-#define __MODBUS_MASTER_H__
+#ifndef __MODBUSMASTER_H__
+#define __MODBUSMASTER_H__
 
 // set to 1 to enable debugging features
-#define __MODBUS_MASTER_DEBUG__ (1)
+#define __MODBUSMASTER_DEBUG__ (1)
 
 
 /* _____STANDARD INCLUDES____________________________________________________ */
@@ -83,25 +83,25 @@ class ModbusMaster
     static const uint8_t ku8MBResponseTimedOut           = 0xE5;
     static const uint8_t ku8MBInvalidCRC                 = 0xE6;
     
-    uint8_t ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty,
-      uint16_t *u16ReadRegister);
-    uint8_t ReadDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty,
-      uint16_t *u16ReadRegister);
-    uint8_t ReadHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty,
-      uint16_t *u16ReadRegister);
-    uint8_t ReadInputRegisters(uint16_t u16ReadAddress, uint8_t u16ReadQty,
-      uint16_t *u16ReadRegister);
+    uint8_t ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty);
+    uint8_t ReadDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty);
+    uint8_t ReadHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty);
+    uint8_t ReadInputRegisters(uint16_t u16ReadAddress, uint8_t u16ReadQty);
     uint8_t WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State);
     uint8_t WriteSingleRegister(uint16_t u16WriteAddress, uint16_t u16WriteValue);
-    uint8_t WriteMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty,
-      uint16_t *u16WriteRegister);
-    uint8_t WriteMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16WriteQty,
-      uint16_t *u16WriteRegister);
+    uint8_t WriteMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty);
+    uint8_t WriteMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16WriteQty);
     uint8_t MaskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask,
       uint16_t u16OrMask);
     uint8_t ReadWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty,
-      uint16_t *u16ReadRegister, uint16_t u16WriteAddress, uint16_t u16WriteQty,
-      uint16_t *u16WriteRegister);
+      uint16_t u16WriteAddress, uint16_t u16WriteQty);
+      
+    // return value of _u16ReadRegister[u8Index]
+    uint16_t GetRegister(uint8_t u8Index);
+    
+    // set value of _u16WriteRegister[u8Index] to u16Value
+    void SetRegister(uint8_t u8Index, uint16_t u16Value);
+    
     
   // library-accessible "private" interface
   private:
@@ -110,6 +110,16 @@ class ModbusMaster
     
     // RS485 baud rate
     uint16_t _u16BaudRate;
+    
+    // slave address, quantity to read; store in register
+    uint16_t _u16ReadAddress;
+    uint16_t _u16ReadQty;
+    uint16_t _u16ReadRegister[64];
+    
+    // slave address, quantity to write; retrieve from register
+    uint16_t _u16WriteAddress;
+    uint16_t _u16WriteQty;
+    uint16_t _u16WriteRegister[64];
     
     // Modbus function codes for bit access
     static const uint8_t ku8MBReadCoils                  = 0x01;
@@ -129,8 +139,6 @@ class ModbusMaster
     static const uint8_t ku8MBResponseTimeout            = 200;
     
     // master function that conducts Modbus transactions
-    uint8_t ModbusMasterTransaction(uint8_t u8MBFunction, uint16_t u16ReadAddress,
-      uint16_t u16ReadQty, uint16_t *u16ReadRegister, uint16_t u16WriteAddress,
-      uint16_t u16WriteQty, uint16_t *u16WriteRegister);
+    uint8_t ModbusMasterTransaction(uint8_t u8MBFunction);
 };
 #endif

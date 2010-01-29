@@ -17,7 +17,7 @@
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009, 2010 Doc Walker
+  Copyright © 2009, 2010 Doc Walker <dfwmountaineers at gmail dot com>
   $Id$
   
 */
@@ -54,7 +54,7 @@ void ModbusMaster::begin(void)
 void ModbusMaster::begin(uint16_t u16BaudRate)
 {
   Serial.begin(u16BaudRate);
-#if __MODBUS_MASTER_DEBUG__
+#if __MODBUSMASTER_DEBUG__
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
 #endif
@@ -62,46 +62,50 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 
 
 // Modbus function 0x01 Read Coils
-uint8_t ModbusMaster::ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty,
-  uint16_t *u16ReadRegister)
+uint8_t ModbusMaster::ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
 {
-  return ModbusMasterTransaction(ku8MBReadCoils, u16ReadAddress, u16BitQty, u16ReadRegister,
-    0, 0, 0);
+  _u16ReadAddress = u16ReadAddress;
+  _u16ReadQty = u16BitQty;
+  return ModbusMasterTransaction(ku8MBReadCoils);
 }
 
 
 // Modbus function 0x02 Read Discrete Inputs
-uint8_t ModbusMaster::ReadDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty,
-  uint16_t *u16ReadRegister)
+uint8_t ModbusMaster::ReadDiscreteInputs(uint16_t u16ReadAddress,
+  uint16_t u16BitQty)
 {
-  return ModbusMasterTransaction(ku8MBReadDiscreteInputs, u16ReadAddress, u16BitQty,
-    u16ReadRegister, 0, 0, 0);
+  _u16ReadAddress = u16ReadAddress;
+  _u16ReadQty = u16BitQty;
+  return ModbusMasterTransaction(ku8MBReadDiscreteInputs);
 }
 
 
 // Modbus function 0x03 Read Holding Registers
 uint8_t ModbusMaster::ReadHoldingRegisters(uint16_t u16ReadAddress,
-  uint16_t u16ReadQty, uint16_t *u16ReadRegister)
+  uint16_t u16ReadQty)
 {
-  return ModbusMasterTransaction(ku8MBReadHoldingRegisters, u16ReadAddress, u16ReadQty,
-    u16ReadRegister, 0, 0, 0);
+  _u16ReadAddress = u16ReadAddress;
+  _u16ReadQty = u16ReadQty;
+  return ModbusMasterTransaction(ku8MBReadHoldingRegisters);
 }
 
 
 // Modbus function 0x04 Read Input Registers
-uint8_t ModbusMaster::ReadInputRegisters(uint16_t u16ReadAddress, uint8_t u16ReadQty,
-  uint16_t *u16ReadRegister)
+uint8_t ModbusMaster::ReadInputRegisters(uint16_t u16ReadAddress,
+  uint8_t u16ReadQty)
 {
-  return ModbusMasterTransaction(ku8MBReadInputRegisters, u16ReadAddress, u16ReadQty,
-    u16ReadRegister, 0, 0, 0);
+  _u16ReadAddress = u16ReadAddress;
+  _u16ReadQty = u16ReadQty;
+  return ModbusMasterTransaction(ku8MBReadInputRegisters);
 }
 
 
 // Modbus function 0x05 Write Single Coil
 uint8_t ModbusMaster::WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
 {
-  return ModbusMasterTransaction(ku8MBWriteSingleCoil, 0, 0, 0, u16WriteAddress,
-    (u8State ? 0xFF00 : 0x0000), 0);
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = (u8State ? 0xFF00 : 0x0000);
+  return ModbusMasterTransaction(ku8MBWriteSingleCoil);
 }
 
 
@@ -109,26 +113,29 @@ uint8_t ModbusMaster::WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
 uint8_t ModbusMaster::WriteSingleRegister(uint16_t u16WriteAddress,
   uint16_t u16WriteValue)
 {
-  return ModbusMasterTransaction(ku8MBWriteSingleRegister, 0, 0, 0, u16WriteAddress, 0,
-    &u16WriteValue);
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteRegister[0] = u16WriteValue;
+  return ModbusMasterTransaction(ku8MBWriteSingleRegister);
 }
 
 
 // Modbus function 0x0F Write Multiple Coils
 uint8_t ModbusMaster::WriteMultipleCoils(uint16_t u16WriteAddress,
-  uint16_t u16BitQty, uint16_t *u16WriteRegister)
+  uint16_t u16BitQty)
 {
-  return ModbusMasterTransaction(ku8MBWriteMultipleCoils, 0, 0, 0, u16WriteAddress,
-    u16BitQty, u16WriteRegister);
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = u16BitQty;
+  return ModbusMasterTransaction(ku8MBWriteMultipleCoils);
 }
 
 
 // Modbus function 0x10 Write Multiple Registers
 uint8_t ModbusMaster::WriteMultipleRegisters(uint16_t u16WriteAddress,
-  uint16_t u16WriteQty, uint16_t *u16WriteRegister)
+  uint16_t u16WriteQty)
 {
-  return ModbusMasterTransaction(ku8MBWriteMultipleRegisters, 0, 0, 0, u16WriteAddress,
-    u16WriteQty, u16WriteRegister);
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = u16WriteQty;
+  return ModbusMasterTransaction(ku8MBWriteMultipleRegisters);
 }
 
 
@@ -136,29 +143,45 @@ uint8_t ModbusMaster::WriteMultipleRegisters(uint16_t u16WriteAddress,
 uint8_t ModbusMaster::MaskWriteRegister(uint16_t u16WriteAddress,
   uint16_t u16AndMask, uint16_t u16OrMask)
 {
-  uint16_t u16WriteRegister[2];
-  u16WriteRegister[0] = u16AndMask;
-  u16WriteRegister[1] = u16OrMask;
-  return ModbusMasterTransaction(ku8MBMaskWriteRegister, 0, 0, 0, u16WriteAddress, 0,
-    u16WriteRegister);
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteRegister[0] = u16AndMask;
+  _u16WriteRegister[1] = u16OrMask;
+  return ModbusMasterTransaction(ku8MBMaskWriteRegister);
 }
 
 
 // Modbus function 0x17 Read Write Multiple Registers
 uint8_t ModbusMaster::ReadWriteMultipleRegisters(uint16_t u16ReadAddress,
-  uint16_t u16ReadQty, uint16_t *u16ReadRegister, uint16_t u16WriteAddress,
-  uint16_t u16WriteQty, uint16_t *u16WriteRegister)
+  uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty)
 {
-  return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters, u16ReadAddress,
-    u16ReadQty, u16ReadRegister, u16WriteAddress, u16WriteQty, u16WriteRegister);
+  _u16ReadAddress = u16ReadAddress;
+  _u16ReadQty = u16ReadQty;
+  _u16WriteAddress = u16WriteAddress;
+  _u16WriteQty = u16WriteQty;
+  return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
+}
+
+
+// return value of _u16ReadRegister[u8Index]
+uint16_t ModbusMaster::GetRegister(uint8_t u8Index)
+{
+  // TODO: add range checking on u8Index
+  return _u16ReadRegister[u8Index];
+}
+
+
+
+// set value of _u16WriteRegister[u8Index] to u16Value
+void ModbusMaster::SetRegister(uint8_t u8Index, uint16_t u16Value)
+{
+  // TODO: add range checking on u8Index
+  _u16WriteRegister[u8Index] = u16Value;
 }
 
 
 /* _____PRIVATE FUNCTIONS____________________________________________________ */
 // Modbus master composite function
-uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
-  uint16_t u16ReadAddress, uint16_t u16ReadQty, uint16_t *u16ReadRegister,
-  uint16_t u16WriteAddress, uint16_t u16WriteQty, uint16_t *u16WriteRegister)
+uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
 {
   uint8_t u8ModbusADU[256];
   uint8_t u8ModbusADUSize = 0;
@@ -179,10 +202,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
     case ku8MBReadInputRegisters:
     case ku8MBReadHoldingRegisters:
     case ku8MBReadWriteMultipleRegisters:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16ReadAddress);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16ReadAddress);
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16ReadQty);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16ReadQty);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadAddress);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadAddress);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadQty);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadQty);
       break;
   }
   
@@ -194,38 +217,38 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
     case ku8MBWriteSingleRegister:
     case ku8MBWriteMultipleRegisters:
     case ku8MBReadWriteMultipleRegisters:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteAddress);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteAddress);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteAddress);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteAddress);
       break;
   }
   
   switch(u8MBFunction)
   {
     case ku8MBWriteSingleCoil:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteQty);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteQty);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
       break;
       
     case ku8MBWriteSingleRegister:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteRegister[lowByte(u16WriteQty)]);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteRegister[lowByte(u16WriteQty)]);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[lowByte(_u16WriteQty)]);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[lowByte(_u16WriteQty)]);
       break;
       
     case ku8MBWriteMultipleCoils:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteQty);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteQty);
-      u8Qty = (u16WriteQty % 8) ? ((u16WriteQty >> 3) + 1) : (u16WriteQty >> 3);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
+      u8Qty = (_u16WriteQty % 8) ? ((_u16WriteQty >> 3) + 1) : (_u16WriteQty >> 3);
       u8ModbusADU[u8ModbusADUSize++] = u8Qty;
       for (i = 0; i < u8Qty; i++)
       {
         switch(i % 2)
         {
           case 0: // i is even
-            u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteRegister[i >> 1]);
+            u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[i >> 1]);
             break;
             
           case 1: // i is odd
-            u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteRegister[i >> 1]);
+            u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[i >> 1]);
             break;
         }
       }
@@ -233,22 +256,22 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
       
     case ku8MBWriteMultipleRegisters:
     case ku8MBReadWriteMultipleRegisters:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteQty);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteQty);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteQty << 1);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty << 1);
       
-      for (i = 0; i < lowByte(u16WriteQty); i++)
+      for (i = 0; i < lowByte(_u16WriteQty); i++)
       {
-        u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteRegister[i]);
-        u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteRegister[i]);
+        u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[i]);
+        u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[i]);
       }
       break;
       
     case ku8MBMaskWriteRegister:
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteRegister[0]);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteRegister[0]);
-      u8ModbusADU[u8ModbusADUSize++] = highByte(u16WriteRegister[1]);
-      u8ModbusADU[u8ModbusADUSize++] = lowByte(u16WriteRegister[1]);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[0]);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[0]);
+      u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteRegister[1]);
+      u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteRegister[1]);
       break;
   }
   
@@ -282,12 +305,12 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
   {
     if (Serial.available())
     {
-#if __MODBUS_MASTER_DEBUG__
+#if __MODBUSMASTER_DEBUG__
       digitalWrite(4, true);
 #endif
       u8ModbusADU[u8ModbusADUSize++] = Serial.read();
       u8BytesLeft--;
-#if __MODBUS_MASTER_DEBUG__
+#if __MODBUSMASTER_DEBUG__
       digitalWrite(4, false);
 #endif
       
@@ -300,12 +323,12 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
     }
     else
     {
-#if __MODBUS_MASTER_DEBUG__
+#if __MODBUSMASTER_DEBUG__
       digitalWrite(5, true);
 #endif
       delayMicroseconds(1000);
       u8TimeLeft--;
-#if __MODBUS_MASTER_DEBUG__
+#if __MODBUSMASTER_DEBUG__
       digitalWrite(5, false);
 #endif
     }
@@ -397,13 +420,13 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
         // load bytes into word; response bytes are ordered L, H, L, H, ...
         for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
         {
-          u16ReadRegister[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
+          _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
         }
         
         // in the event of an odd number of bytes, load last byte into zero-padded word
         if (u8ModbusADU[2] % 2)
         {
-          u16ReadRegister[i] = word(0, u8ModbusADU[2 * i + 3]);
+          _u16ReadRegister[i] = word(0, u8ModbusADU[2 * i + 3]);
         }
         break;
         
@@ -413,7 +436,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction,
         // load bytes into word; response bytes are ordered H, L, H, L, ...
         for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
         {
-          u16ReadRegister[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
+          _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
         }
         break;
     }
