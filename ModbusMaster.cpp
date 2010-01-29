@@ -195,7 +195,16 @@ uint8_t ModbusMaster::ReadWriteMultipleRegisters(uint16_t u16ReadAddress,
 
 
 // return value of _u16ReadRegister[u8Index]
-uint16_t ModbusMaster::GetRegister(uint8_t u8Index)
+uint16_t ModbusMaster::u16GetResult(uint8_t u8Index)
+{
+  // TODO: add range checking on u8Index
+  return _u16ReadRegister[u8Index];
+}
+
+
+
+// return value of _u16ReadRegister[u8Index]
+uint32_t ModbusMaster::u32GetResult(uint8_t u8Index)
 {
   // TODO: add range checking on u8Index
   return _u16ReadRegister[u8Index];
@@ -204,10 +213,18 @@ uint16_t ModbusMaster::GetRegister(uint8_t u8Index)
 
 
 // set value of _u16WriteRegister[u8Index] to u16Value
-void ModbusMaster::SetRegister(uint8_t u8Index, uint16_t u16Value)
+void ModbusMaster::SetSource(uint8_t u8Index, uint16_t u16Value)
 {
   // TODO: add range checking on u8Index
   _u16WriteRegister[u8Index] = u16Value;
+}
+
+
+// set value of _u16WriteRegister[u8Index] to u16Value
+void ModbusMaster::SetSource(uint8_t u8Index, uint32_t u32Value)
+{
+  // TODO: add range checking on u8Index
+  _u16WriteRegister[u8Index] = u32Value;
 }
 
 

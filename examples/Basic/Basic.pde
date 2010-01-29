@@ -18,13 +18,13 @@ void loop()
   
   i++;
   
-  slave2.SetRegister(0, lowWord(i));
-  slave2.SetRegister(1, highWord(i));
+  slave2.SetSource(0, lowWord(i));
+  slave2.SetSource(1, highWord(i));
   
-  // slave 1: write u16DataOut to (2) 16-bit registers starting at register 0
+  // slave 1: write source to (2) 16-bit registers starting at register 0
   result = slave2.WriteMultipleRegisters(0, 2);
   
-  // slave 1: read (6) 16-bit registers starting at register 2 to u16DataIn
+  // slave 1: read (6) 16-bit registers starting at register 2 to result
   result = slave2.ReadHoldingRegisters(2, 6);
 }
 

@@ -35,19 +35,19 @@ void loop()
 {
   static uint32_t u32ShiftRegister;
   static uint32_t i;
-  uint8_t result;
+  uint8_t u8Status;
   
   u32ShiftRegister = ((u32ShiftRegister < 0x01000000) ? (u32ShiftRegister << 4) : 1);
   if (u32ShiftRegister == 0) u32ShiftRegister = 1;
   i++;
   
-  nanoLC.SetRegister(0, lowWord(u32ShiftRegister));
-  nanoLC.SetRegister(1, highWord(u32ShiftRegister));
-  nanoLC.SetRegister(2, lowWord(i));
-  nanoLC.SetRegister(3, highWord(i));
+  nanoLC.SetSource(0, lowWord(u32ShiftRegister));
+  nanoLC.SetSource(1, highWord(u32ShiftRegister));
+  nanoLC.SetSource(2, lowWord(i));
+  nanoLC.SetSource(3, highWord(i));
   
-  // write to (4) 16-bit registers starting at NANO_REG(1)
-  // read (4) 16-bit registers starting at NANO_REG(0)
+  // write source to (4) 16-bit registers starting at NANO_REG(1)
+  // read (4) 16-bit registers starting at NANO_REG(0) to result
   nanoLC.ReadWriteMultipleRegisters(NANO_REG(0), 4, NANO_REG(1), 4);
   
   // write lowWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3)
@@ -56,38 +56,38 @@ void loop()
   // write highWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3) + 1
   nanoLC.WriteSingleRegister(NANO_REG(3) + 1, highWord(u32ShiftRegister));
   
-  // write to (2) 16-bit registers starting at NANO_REG(4)
-  nanoLC.SetRegister(0, nanoLC.GetRegister(0));
-  nanoLC.SetRegister(1, nanoLC.GetRegister(1));
+  // write source to (2) 16-bit registers starting at NANO_REG(4)
+  nanoLC.SetSource(0, nanoLC.u16GetResult(0));
+  nanoLC.SetSource(1, nanoLC.u16GetResult(1));
   nanoLC.WriteMultipleRegisters(NANO_REG(4), 2);
   
-  // read 17 coils starting at NANO_FLAG(0)
+  // read 17 coils starting at NANO_FLAG(0) to result
   nanoLC.ReadCoils(NANO_FLAG(0), 17);
   
-  // read (66) 16-bit registers starting at NANO_REG(0)
+  // read (66) 16-bit registers starting at NANO_REG(0) to result
   // generates Modbus exception ku8MBIllegalDataAddress (0x02)
-  result = nanoLC.ReadHoldingRegisters(NANO_REG(0), 66);
-  if (result == nanoLC.ku8MBIllegalDataAddress)
+  u8Status = nanoLC.ReadHoldingRegisters(NANO_REG(0), 66);
+  if (u8Status == nanoLC.ku8MBIllegalDataAddress)
   {
-    // read (64) 16-bit registers starting at NANO_REG(0)
-    result = nanoLC.ReadHoldingRegisters(NANO_REG(0), 64);
+    // read (64) 16-bit registers starting at NANO_REG(0) to result
+    u8Status = nanoLC.ReadHoldingRegisters(NANO_REG(0), 64);
   }
   
-  // read (8) 16-bit registers starting at NANO_AO(0)
+  // read (8) 16-bit registers starting at NANO_AO(0) to result
   nanoLC.ReadHoldingRegisters(NANO_AO(0), 8);
   
-  // read (64) 16-bit registers starting at NANO_TCP(0)
+  // read (64) 16-bit registers starting at NANO_TCP(0) to result
   nanoLC.ReadHoldingRegisters(NANO_TCP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTP(0)
+  // read (64) 16-bit registers starting at NANO_OTP(0) to result
   nanoLC.ReadHoldingRegisters(NANO_OTP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_TCA(0)
+  // read (64) 16-bit registers starting at NANO_TCA(0) to result
   nanoLC.ReadHoldingRegisters(NANO_TCA(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTA(0)
+  // read (64) 16-bit registers starting at NANO_OTA(0) to result
   nanoLC.ReadHoldingRegisters(NANO_OTA(0), 64);
   
-  // read (8) 16-bit registers starting at NANO_AI(0)
+  // read (8) 16-bit registers starting at NANO_AI(0) to result
   nanoLC.ReadInputRegisters(NANO_AI(0), 8);
 }

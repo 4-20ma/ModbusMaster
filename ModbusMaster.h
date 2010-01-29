@@ -58,7 +58,6 @@
 
 
 /* _____CLASS DEFINITIONS____________________________________________________ */
-// library interface description
 class ModbusMaster
 {
   public:
@@ -125,10 +124,12 @@ class ModbusMaster
       uint16_t u16WriteAddress, uint16_t u16WriteQty);
       
     // return value of _u16ReadRegister[u8Index]
-    uint16_t GetRegister(uint8_t u8Index);
+    uint16_t u16GetResult(uint8_t u8Index);
+    uint32_t u32GetResult(uint8_t u8Index);
     
     // set value of _u16WriteRegister[u8Index] to u16Value
-    void SetRegister(uint8_t u8Index, uint16_t u16Value);
+    void SetSource(uint8_t u8Index, uint16_t u16Value);
+    void SetSource(uint8_t u8Index, uint32_t u32Value);
     
     
   private:
