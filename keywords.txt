@@ -7,37 +7,28 @@
 #######################################
 
 ModbusMaster	KEYWORD1
+begin	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-u8ReadCoils	KEYWORD2
-u8ReadDiscreteInputs	KEYWORD2
-u8ReadHoldingRegisters	KEYWORD2
-u8ReadInputRegisters	KEYWORD2
-u8WriteSingleCoil	KEYWORD2
-u8WriteSingleRegister	KEYWORD2
-u8WriteMultipleCoils	KEYWORD2
-u8WriteMultipleRegisters	KEYWORD2
-u8MaskWriteRegister	KEYWORD2
-u8ReadWriteMultipleRegisters	KEYWORD2
+ReadCoils	KEYWORD2
+ReadDiscreteInputs	KEYWORD2
+ReadHoldingRegisters	KEYWORD2
+ReadInputRegisters	KEYWORD2
+WriteSingleCoil	KEYWORD2
+WriteSingleRegister	KEYWORD2
+WriteMultipleCoils	KEYWORD2
+WriteMultipleRegisters	KEYWORD2
+MaskWriteRegister	KEYWORD2
+ReadWriteMultipleRegisters	KEYWORD2
+GetRegister	KEYWORD2
+SetRegister	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-
-ku8MBReadCoils	LITERAL1
-ku8MBReadDiscreteInputs	LITERAL1
-ku8MBWriteSingleCoil	LITERAL1
-ku8MBWriteMultipleCoils	LITERAL1
-
-ku8MBReadHoldingRegisters	LITERAL1
-ku8MBReadInputRegisters	LITERAL1
-ku8MBWriteSingleRegister	LITERAL1
-ku8MBWriteMultipleRegisters	LITERAL1
-ku8MBMaskWriteRegister	LITERAL1
-ku8MBReadWriteMultipleRegisters	LITERAL1
 
 ku8MBIllegalFunction	LITERAL1
 ku8MBIllegalDataAddress	LITERAL1
@@ -51,5 +42,3 @@ ku8MBInvalidSlaveID	LITERAL1
 ku8MBInvalidFunction	LITERAL1
 ku8MBResponseTimedOut	LITERAL1
 ku8MBInvalidCRC	LITERAL1
-
-ku8MBResponseTimeout	LITERAL1
