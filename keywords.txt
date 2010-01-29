@@ -23,8 +23,9 @@ WriteMultipleCoils	KEYWORD2
 WriteMultipleRegisters	KEYWORD2
 MaskWriteRegister	KEYWORD2
 ReadWriteMultipleRegisters	KEYWORD2
-GetRegister	KEYWORD2
-SetRegister	KEYWORD2
+u16GetResult	KEYWORD2
+u32GetResult	KEYWORD2
+SetSource	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
