@@ -31,14 +31,24 @@
 
 
 /* _____PUBLIC FUNCTIONS_____________________________________________________ */
+// constructor; default serial port 0, slave ID 1
 ModbusMaster::ModbusMaster(void)
 {
-  ModbusMaster(1);
+  ModbusMaster(0, 1);
 }
 
 
+// constructor; default serial port 0, call function with desired slave ID
 ModbusMaster::ModbusMaster(uint8_t u8MBSlave)
 {
+  ModbusMaster(0, u8MBSlave);
+}
+
+
+// constructor; call function with desired serial port (0..3), slave ID
+ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
+{
+  _u8SerialPort = u8SerialPort;
   _u8MBSlave = u8MBSlave;
 }
 
@@ -53,7 +63,28 @@ void ModbusMaster::begin(void)
 // initialize serial port for Modbus communication
 void ModbusMaster::begin(uint16_t u16BaudRate)
 {
-  Serial.begin(u16BaudRate);
+  switch(_u8SerialPort)
+  {
+#if defined(__AVR_ATmega1280__)
+    case 1:
+      Serial1.begin(u16BaudRate);
+      break;
+      
+    case 2:
+      Serial2.begin(u16BaudRate);
+      break;
+      
+    case 3:
+      Serial3.begin(u16BaudRate);
+      break;
+#endif
+      
+    case 0:
+    default:
+      Serial.begin(u16BaudRate);
+      break;
+  }
+  
 #if __MODBUSMASTER_DEBUG__
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);

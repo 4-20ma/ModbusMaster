@@ -23,8 +23,8 @@
 */
 
   
-#ifndef __MODBUSMASTER_H__
-#define __MODBUSMASTER_H__
+#ifndef ModbusMaster_h
+#define ModbusMaster_h
 
 // set to 1 to enable debugging features
 #define __MODBUSMASTER_DEBUG__ (1)
@@ -61,11 +61,20 @@
 // library interface description
 class ModbusMaster
 {
-  // user-accessible "public" interface
   public:
+    // constructor; default serial port 0, slave ID 1
     ModbusMaster(void);
+    
+    // constructor; default serial port 0, call function with desired slave ID
     ModbusMaster(uint8_t u8MBSlave);
+    
+    // constructor; call function with desired serial port (0..3), slave ID
+    ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave);
+    
+    // initialize class object, serial port using default baud rate 19200
     void begin(void);
+    
+    // initialize class object, serial port using desired baud rate
     void begin(uint16_t u16BaudRate);
     
     // Modbus exception codes
@@ -83,16 +92,35 @@ class ModbusMaster
     static const uint8_t ku8MBResponseTimedOut           = 0xE5;
     static const uint8_t ku8MBInvalidCRC                 = 0xE6;
     
+    // Modbus function 0x01 Read Coils
     uint8_t ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty);
+    
+    // Modbus function 0x02 Read Discrete Inputs
     uint8_t ReadDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty);
+    
+    // Modbus function 0x03 Read Holding Registers
     uint8_t ReadHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty);
+    
+    // Modbus function 0x04 Read Input Registers
     uint8_t ReadInputRegisters(uint16_t u16ReadAddress, uint8_t u16ReadQty);
+    
+    // Modbus function 0x05 Write Single Coil
     uint8_t WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State);
+    
+    // Modbus function 0x06 Write Single Register
     uint8_t WriteSingleRegister(uint16_t u16WriteAddress, uint16_t u16WriteValue);
+    
+    // Modbus function 0x0F Write Multiple Coils
     uint8_t WriteMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty);
+    
+    // Modbus function 0x10 Write Multiple Registers
     uint8_t WriteMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16WriteQty);
+    
+    // Modbus function 0x16 Mask Write Register
     uint8_t MaskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask,
       uint16_t u16OrMask);
+      
+    // Modbus function 0x17 Read Write Multiple Registers
     uint8_t ReadWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty,
       uint16_t u16WriteAddress, uint16_t u16WriteQty);
       
@@ -103,12 +131,10 @@ class ModbusMaster
     void SetRegister(uint8_t u8Index, uint16_t u16Value);
     
     
-  // library-accessible "private" interface
   private:
-    // Modbus slave
+    // which serial port, Modbus slave ID, baud rate
+    uint8_t _u8SerialPort;
     uint8_t _u8MBSlave;
-    
-    // RS485 baud rate
     uint16_t _u16BaudRate;
     
     // slave address, quantity to read; store in register
