@@ -30,25 +30,34 @@
 #include "ModbusMaster.h"
 
 
+/* _____GLOBAL VARIABLES_____________________________________________________ */
+HardwareSerial MBSerial = Serial;
+
+
 /* _____PUBLIC FUNCTIONS_____________________________________________________ */
-// constructor; default serial port 0, slave ID 1
+// constructor
 ModbusMaster::ModbusMaster(void)
 {
-  ModbusMaster(0, 1);
+  // default to serial port 0, slave ID 1
+  _u8SerialPort = 0;
+  _u8MBSlave = 1;
 }
 
 
-// constructor; default serial port 0, call function with desired slave ID
+// constructor
 ModbusMaster::ModbusMaster(uint8_t u8MBSlave)
 {
-  ModbusMaster(0, u8MBSlave);
+  // default to serial port 0, set slave ID
+  _u8SerialPort = 0;
+  _u8MBSlave = u8MBSlave;
 }
 
 
-// constructor; call function with desired serial port (0..3), slave ID
+// constructor
 ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
 {
-  _u8SerialPort = u8SerialPort;
+  // set desired serial port (0..3), slave ID
+  _u8SerialPort = (u8SerialPort > 3) ? 0 : u8SerialPort;
   _u8MBSlave = u8MBSlave;
 }
 
@@ -56,6 +65,7 @@ ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
 // initialize serial port for Modbus communication using default baud rate
 void ModbusMaster::begin(void)
 {
+  // default to 19200
   begin(19200);
 }
 
@@ -67,24 +77,25 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
   {
 #if defined(__AVR_ATmega1280__)
     case 1:
-      Serial1.begin(u16BaudRate);
+      MBSerial = Serial1;
       break;
       
     case 2:
-      Serial2.begin(u16BaudRate);
+      MBSerial = Serial2;
       break;
       
     case 3:
-      Serial3.begin(u16BaudRate);
+      MBSerial = Serial3;
       break;
 #endif
       
     case 0:
     default:
-      Serial.begin(u16BaudRate);
+      MBSerial = Serial;
       break;
   }
   
+  MBSerial.begin(u16BaudRate);
 #if __MODBUSMASTER_DEBUG__
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
@@ -195,36 +206,32 @@ uint8_t ModbusMaster::ReadWriteMultipleRegisters(uint16_t u16ReadAddress,
 
 
 // return value of _u16ReadRegister[u8Index]
-uint16_t ModbusMaster::u16GetResult(uint8_t u8Index)
+uint16_t ModbusMaster::RX(uint8_t u8Index)
 {
-  // TODO: add range checking on u8Index
-  return _u16ReadRegister[u8Index];
-}
-
-
-
-// return value of _u16ReadRegister[u8Index]
-uint32_t ModbusMaster::u32GetResult(uint8_t u8Index)
-{
-  // TODO: add range checking on u8Index
-  return _u16ReadRegister[u8Index];
+  if (u8Index < ku8MaxArraySize)
+  {
+    return _u16ReadRegister[u8Index];
+  }
+  else
+  {
+    return 0xFFFF;
+  }
 }
 
 
 
 // set value of _u16WriteRegister[u8Index] to u16Value
-void ModbusMaster::SetSource(uint8_t u8Index, uint16_t u16Value)
+uint8_t ModbusMaster::TX(uint8_t u8Index, uint16_t u16Value)
 {
-  // TODO: add range checking on u8Index
-  _u16WriteRegister[u8Index] = u16Value;
-}
-
-
-// set value of _u16WriteRegister[u8Index] to u16Value
-void ModbusMaster::SetSource(uint8_t u8Index, uint32_t u32Value)
-{
-  // TODO: add range checking on u8Index
-  _u16WriteRegister[u8Index] = u32Value;
+  if (u8Index < ku8MaxArraySize)
+  {
+    _u16WriteRegister[u8Index] = u16Value;
+    return ku8MBSuccess;
+  }
+  else
+  {
+    return ku8MBIllegalDataAddress;
+  }
 }
 
 
@@ -335,40 +342,28 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
   
-  // verify correct request size -- is this the correct size???
-  if (u8ModbusADUSize > 254)
-  {
-    u8MBStatus = ku8MBInvalidRequestADUSize;
-  }
-  
   // transmit request
   for (i = 0; i < u8ModbusADUSize; i++)
   {
-    Serial.print(u8ModbusADU[i], BYTE);
+    MBSerial.print(u8ModbusADU[i], BYTE);
   }
   
   u8ModbusADUSize = 0;
-  Serial.flush();
+  MBSerial.flush();
   
+  // loop until we run out of time or bytes, or an error occurs
   while (u8TimeLeft && u8BytesLeft && !u8MBStatus)
   {
-    if (Serial.available())
+    if (MBSerial.available())
     {
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(4, true);
 #endif
-      u8ModbusADU[u8ModbusADUSize++] = Serial.read();
+      u8ModbusADU[u8ModbusADUSize++] = MBSerial.read();
       u8BytesLeft--;
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(4, false);
 #endif
-      
-      // will be able to remove this due to u8BytesLeft
-      if (u8ModbusADUSize >= 0xFF)
-      {
-        u8MBStatus = ku8MBInvalidResponseADUSize;
-        break;
-      }
     }
     else
     {
@@ -406,6 +401,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         break;
       }
       
+      // evaluate returned Modbus function code
       switch(u8ModbusADU[1])
       {
         case ku8MBReadCoils:
@@ -462,6 +458,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   // disassemble ADU into words
   if (!u8MBStatus)
   {
+    // evaluate returned Modbus function code
     switch(u8ModbusADU[1])
     {
       case ku8MBReadCoils:
@@ -469,13 +466,19 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         // load bytes into word; response bytes are ordered L, H, L, H, ...
         for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
         {
-          _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
+          if (i < ku8MaxArraySize)
+          {
+            _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
+          }
         }
         
         // in the event of an odd number of bytes, load last byte into zero-padded word
         if (u8ModbusADU[2] % 2)
         {
-          _u16ReadRegister[i] = word(0, u8ModbusADU[2 * i + 3]);
+          if (i < ku8MaxArraySize)
+          {
+            _u16ReadRegister[i] = word(0, u8ModbusADU[2 * i + 3]);
+          }
         }
         break;
         
@@ -485,7 +488,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         // load bytes into word; response bytes are ordered H, L, H, L, ...
         for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
         {
-          _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
+          if (i < ku8MaxArraySize)
+          {
+            _u16ReadRegister[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
+          }
         }
         break;
     }

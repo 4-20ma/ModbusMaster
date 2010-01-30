@@ -32,7 +32,7 @@
 
 /* _____STANDARD INCLUDES____________________________________________________ */
 // include types & constants of Wiring core API
-#include <WProgram.h>
+#include "WProgram.h"
 
 
 /* _____UTILITY MACROS_______________________________________________________ */
@@ -124,12 +124,10 @@ class ModbusMaster
       uint16_t u16WriteAddress, uint16_t u16WriteQty);
       
     // return value of _u16ReadRegister[u8Index]
-    uint16_t u16GetResult(uint8_t u8Index);
-    uint32_t u32GetResult(uint8_t u8Index);
+    uint16_t RX(uint8_t u8Index);
     
     // set value of _u16WriteRegister[u8Index] to u16Value
-    void SetSource(uint8_t u8Index, uint16_t u16Value);
-    void SetSource(uint8_t u8Index, uint32_t u32Value);
+    uint8_t TX(uint8_t u8Index, uint16_t u16Value);
     
     
   private:
@@ -138,15 +136,18 @@ class ModbusMaster
     uint8_t _u8MBSlave;
     uint16_t _u16BaudRate;
     
+    // size of RX/TX array
+    static const uint8_t ku8MaxArraySize                 = 64;
+    
     // slave address, quantity to read; store in register
     uint16_t _u16ReadAddress;
     uint16_t _u16ReadQty;
-    uint16_t _u16ReadRegister[64];
+    uint16_t _u16ReadRegister[ku8MaxArraySize];
     
     // slave address, quantity to write; retrieve from register
     uint16_t _u16WriteAddress;
     uint16_t _u16WriteQty;
-    uint16_t _u16WriteRegister[64];
+    uint16_t _u16WriteRegister[ku8MaxArraySize];
     
     // Modbus function codes for bit access
     static const uint8_t ku8MBReadCoils                  = 0x01;

@@ -8,11 +8,15 @@
 
 ModbusMaster	KEYWORD1
 begin	KEYWORD1
+MBSerial	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
+lowWord	KEYWORD2
+highWord	KEYWORD2
+LONG	KEYWORD2
 ReadCoils	KEYWORD2
 ReadDiscreteInputs	KEYWORD2
 ReadHoldingRegisters	KEYWORD2
@@ -23,9 +27,8 @@ WriteMultipleCoils	KEYWORD2
 WriteMultipleRegisters	KEYWORD2
 MaskWriteRegister	KEYWORD2
 ReadWriteMultipleRegisters	KEYWORD2
-u16GetResult	KEYWORD2
-u32GetResult	KEYWORD2
-SetSource	KEYWORD2
+RX	KEYWORD2
+TX	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
