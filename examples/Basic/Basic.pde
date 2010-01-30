@@ -18,7 +18,7 @@
   
   Written by Doc Walker (Rx)
   Copyright © 2009, 2010 Doc Walker <dfwmountaineers at gmail dot com>
-  $Id: ModbusMaster.h 15 2010-01-29 16:54:49Z dfwmountaineers $
+  $Id$
   
 */
 
