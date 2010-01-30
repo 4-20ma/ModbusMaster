@@ -205,7 +205,7 @@ uint8_t ModbusMaster::ReadWriteMultipleRegisters(uint16_t u16ReadAddress,
 }
 
 
-// return value of _u16ReadRegister[u8Index]
+// method used to retrieve 16-bit words from Modbus queries
 uint16_t ModbusMaster::RX(uint8_t u8Index)
 {
   if (u8Index < ku8MaxArraySize)
@@ -220,7 +220,7 @@ uint16_t ModbusMaster::RX(uint8_t u8Index)
 
 
 
-// set value of _u16WriteRegister[u8Index] to u16Value
+// method used to set 16-bit words for Modbus queries
 uint8_t ModbusMaster::TX(uint8_t u8Index, uint16_t u16Value)
 {
   if (u8Index < ku8MaxArraySize)

@@ -39,11 +39,15 @@ void setup()
 void loop()
 {
   static uint32_t i;
-  uint8_t result;
+  uint8_t j, result;
+  uint16_t data[6];
   
   i++;
   
+  // set word 0 of TX to least-significant word of counter (bits 15..0)
   node.TX(0, lowWord(i));
+  
+  // set word 1 of TX to most-significant word of counter (bits 31..16)
   node.TX(1, highWord(i));
   
   // slave 1: write TX to (2) 16-bit registers starting at register 0
@@ -51,5 +55,13 @@ void loop()
   
   // slave 1: read (6) 16-bit registers starting at register 2 to RX
   result = node.ReadHoldingRegisters(2, 6);
+  
+  // do something with data if read is successful
+  if (result == node.ku8MBSuccess)
+  {
+    for (j = 0; j < 6; j++)
+    {
+      data[j] = node.RX(j);
+    }
+  }
 }
-

@@ -123,10 +123,10 @@ class ModbusMaster
     uint8_t ReadWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty,
       uint16_t u16WriteAddress, uint16_t u16WriteQty);
       
-    // return value of _u16ReadRegister[u8Index]
+    // method used to retrieve 16-bit words from Modbus queries
     uint16_t RX(uint8_t u8Index);
     
-    // set value of _u16WriteRegister[u8Index] to u16Value
+    // method used to set 16-bit words for Modbus queries
     uint8_t TX(uint8_t u8Index, uint16_t u16Value);
     
     
