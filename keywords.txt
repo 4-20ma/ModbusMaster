@@ -7,7 +7,6 @@
 #######################################
 
 ModbusMaster	KEYWORD1
-begin	KEYWORD1
 MBSerial	KEYWORD1
 
 #######################################
@@ -17,6 +16,9 @@ MBSerial	KEYWORD1
 lowWord	KEYWORD2
 highWord	KEYWORD2
 LONG	KEYWORD2
+
+begin	KEYWORD2
+
 ReadCoils	KEYWORD2
 ReadDiscreteInputs	KEYWORD2
 ReadHoldingRegisters	KEYWORD2
@@ -27,6 +29,7 @@ WriteMultipleCoils	KEYWORD2
 WriteMultipleRegisters	KEYWORD2
 MaskWriteRegister	KEYWORD2
 ReadWriteMultipleRegisters	KEYWORD2
+
 RX	KEYWORD2
 TX	KEYWORD2
 
