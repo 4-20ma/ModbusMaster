@@ -1,4 +1,5 @@
 /*
+
   ModbusMaster.cpp - library implementing a Modbus RTU Master for Arduino
   
   This file is part of ModbusMaster.
@@ -217,7 +218,6 @@ uint16_t ModbusMaster::RX(uint8_t u8Index)
     return 0xFFFF;
   }
 }
-
 
 
 // method used to set 16-bit words for Modbus queries
