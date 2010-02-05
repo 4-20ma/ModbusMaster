@@ -52,10 +52,10 @@ void loop()
   // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
   node.SetTransmitBuffer(1, highWord(i));
   
-  // slave 1: write TX buffer to (2) 16-bit registers starting at register 0
+  // slave: write TX buffer to (2) 16-bit registers starting at register 0
   result = node.WriteMultipleRegisters(0, 2);
   
-  // slave 1: read (6) 16-bit registers starting at register 2 to RX buffer
+  // slave: read (6) 16-bit registers starting at register 2 to RX buffer
   result = node.ReadHoldingRegisters(2, 6);
   
   // do something with data if read is successful
