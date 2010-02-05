@@ -252,6 +252,6 @@ class ModbusMaster
 #endif
 
 /**
-@example /Basic/Basic.pde
-@example /PhoenixContact_nanoLC/PhoenixContact_nanoLC.pde
+@example examples/Basic/Basic.pde
+@example examples/PhoenixContact_nanoLC/PhoenixContact_nanoLC.pde
 */
