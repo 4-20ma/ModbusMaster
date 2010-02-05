@@ -1,6 +1,7 @@
 /*
 
   PhoenixContact_nanoLC.pde - example using ModbusMaster library
+  to communicate with PHOENIX CONTACT nanoLine controller.
   
   This file is part of ModbusMaster.
   
@@ -26,26 +27,27 @@
 #include <ModbusMaster.h>
 
 // discrete coils
-#define NANO_DO(n)   (0x0000 + n)
-#define NANO_FLAG(n) (0x1000 + n)
+#define NANO_DO(n)   (0x0000 + n) ///< returns nanoLC discrete output address
+#define NANO_FLAG(n) (0x1000 + n) ///< returns nanoLC flag address
 
 // discrete inputs
-#define NANO_DI(n)   (0x0000 + n)
+#define NANO_DI(n)   (0x0000 + n) ///< returns nanoLC discrete input address
 
 // analog holding registers
-#define NANO_REG(n)  (0x0000 + 2 * n)
-#define NANO_AO(n)   (0x1000 + 2 * n)
-#define NANO_TCP(n)  (0x2000 + 2 * n)
-#define NANO_OTP(n)  (0x3000 + 2 * n)
-#define NANO_HSP(n)  (0x4000 + 2 * n)
-#define NANO_TCA(n)  (0x5000 + 2 * n)
-#define NANO_OTA(n)  (0x6000 + 2 * n)
-#define NANO_HSA(n)  (0x7000 + 2 * n)
+#define NANO_REG(n)  (0x0000 + 2 * n) ///< returns nanoLC holding register address
+#define NANO_AO(n)   (0x1000 + 2 * n) ///< returns nanoLC analog output address
+#define NANO_TCP(n)  (0x2000 + 2 * n) ///< returns nanoLC timer/counter preset address
+#define NANO_OTP(n)  (0x3000 + 2 * n) ///< returns nanoLC discrete output preset address
+#define NANO_HSP(n)  (0x4000 + 2 * n) ///< returns nanoLC high-speed counter preset address
+#define NANO_TCA(n)  (0x5000 + 2 * n) ///< returns nanoLC timer/counter accumulator address
+#define NANO_OTA(n)  (0x6000 + 2 * n) ///< returns nanoLC discrete output accumulator address
+#define NANO_HSA(n)  (0x7000 + 2 * n) ///< returns nanoLC high-speed counter accumulator address
 
 // analog input registers
-#define NANO_AI(n)   (0x0000 + 2 * n)
+#define NANO_AI(n)   (0x0000 + 2 * n) ///< returns nanoLC analog input address
 
-// instantiate ModbusMaster object using serial port 0 and slave ID 1
+
+// instantiate ModbusMaster object, serial port 0, Modbus slave ID 1
 ModbusMaster nanoLC(0, 1);
 
 
@@ -66,21 +68,21 @@ void loop()
   if (u32ShiftRegister == 0) u32ShiftRegister = 1;
   i++;
   
-  // set word 0 of TX to least-significant word of u32ShiftRegister (bits 15..0)
-  nanoLC.TX(0, lowWord(u32ShiftRegister));
+  // set word 0 of TX buffer to least-significant word of u32ShiftRegister (bits 15..0)
+  nanoLC.SetTransmitBuffer(0, lowWord(u32ShiftRegister));
   
-  // set word 1 of TX to most-significant word of u32ShiftRegister (bits 31..16)
-  nanoLC.TX(1, highWord(u32ShiftRegister));
+  // set word 1 of TX buffer to most-significant word of u32ShiftRegister (bits 31..16)
+  nanoLC.SetTransmitBuffer(1, highWord(u32ShiftRegister));
   
-  // set word 2 of TX to least-significant word of i (bits 15..0)
-  nanoLC.TX(2, lowWord(i));
+  // set word 2 of TX buffer to least-significant word of i (bits 15..0)
+  nanoLC.SetTransmitBuffer(2, lowWord(i));
   
-  // set word 3 of TX to most-significant word of i (bits 31..16)
-  nanoLC.TX(3, highWord(i));
+  // set word 3 of TX buffer to most-significant word of i (bits 31..16)
+  nanoLC.SetTransmitBuffer(3, highWord(i));
   
-  // write TX to (4) 16-bit registers starting at NANO_REG(1)
-  // read (4) 16-bit registers starting at NANO_REG(0) to RX
-  // data is available via nanoLC.RX(0..3)
+  // write TX buffer to (4) 16-bit registers starting at NANO_REG(1)
+  // read (4) 16-bit registers starting at NANO_REG(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..3)
   nanoLC.ReadWriteMultipleRegisters(NANO_REG(0), 4, NANO_REG(1), 4);
   
   // write lowWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3)
@@ -89,51 +91,51 @@ void loop()
   // write highWord(u32ShiftRegister) to single 16-bit register starting at NANO_REG(3) + 1
   nanoLC.WriteSingleRegister(NANO_REG(3) + 1, highWord(u32ShiftRegister));
   
-  // set word 0 of TX to nanoLC.RX(0) (bits 15..0)
-  nanoLC.TX(0, nanoLC.RX(0));
+  // set word 0 of TX buffer to nanoLC.GetResponseBuffer(0) (bits 15..0)
+  nanoLC.SetTransmitBuffer(0, nanoLC.GetResponseBuffer(0));
   
-  // set word 1 of TX to nanoLC.RX(1) (bits 31..16)
-  nanoLC.TX(1, nanoLC.RX(1));
+  // set word 1 of TX buffer to nanoLC.GetResponseBuffer(1) (bits 31..16)
+  nanoLC.SetTransmitBuffer(1, nanoLC.GetResponseBuffer(1));
   
-  // write TX to (2) 16-bit registers starting at NANO_REG(4)
+  // write TX buffer to (2) 16-bit registers starting at NANO_REG(4)
   nanoLC.WriteMultipleRegisters(NANO_REG(4), 2);
   
-  // read 17 coils starting at NANO_FLAG(0) to RX
-  // bits 15..0 are available via nanoLC.RX(0)
-  // bit 16 is available via zero-padded nanoLC.RX(1)
+  // read 17 coils starting at NANO_FLAG(0) to RX buffer
+  // bits 15..0 are available via nanoLC.GetResponseBuffer(0)
+  // bit 16 is available via zero-padded nanoLC.GetResponseBuffer(1)
   nanoLC.ReadCoils(NANO_FLAG(0), 17);
   
-  // read (66) 16-bit registers starting at NANO_REG(0) to RX
+  // read (66) 16-bit registers starting at NANO_REG(0) to RX buffer
   // generates Modbus exception ku8MBIllegalDataAddress (0x02)
   u8Status = nanoLC.ReadHoldingRegisters(NANO_REG(0), 66);
   if (u8Status == nanoLC.ku8MBIllegalDataAddress)
   {
-    // read (64) 16-bit registers starting at NANO_REG(0) to RX
-    // data is available via nanoLC.RX(0..63)
+    // read (64) 16-bit registers starting at NANO_REG(0) to RX buffer
+    // data is available via nanoLC.GetResponseBuffer(0..63)
     u8Status = nanoLC.ReadHoldingRegisters(NANO_REG(0), 64);
   }
   
-  // read (8) 16-bit registers starting at NANO_AO(0) to RX
-  // data is available via nanoLC.RX(0..7)
+  // read (8) 16-bit registers starting at NANO_AO(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..7)
   nanoLC.ReadHoldingRegisters(NANO_AO(0), 8);
   
-  // read (64) 16-bit registers starting at NANO_TCP(0) to RX
-  // data is available via nanoLC.RX(0..63)
+  // read (64) 16-bit registers starting at NANO_TCP(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..63)
   nanoLC.ReadHoldingRegisters(NANO_TCP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTP(0) to RX
-  // data is available via nanoLC.RX(0..63)
+  // read (64) 16-bit registers starting at NANO_OTP(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..63)
   nanoLC.ReadHoldingRegisters(NANO_OTP(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_TCA(0) to RX
-  // data is available via nanoLC.RX(0..63)
+  // read (64) 16-bit registers starting at NANO_TCA(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..63)
   nanoLC.ReadHoldingRegisters(NANO_TCA(0), 64);
   
-  // read (64) 16-bit registers starting at NANO_OTA(0) to RX
-  // data is available via nanoLC.RX(0..63)
+  // read (64) 16-bit registers starting at NANO_OTA(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..63)
   nanoLC.ReadHoldingRegisters(NANO_OTA(0), 64);
   
-  // read (8) 16-bit registers starting at NANO_AI(0) to RX
-  // data is available via nanoLC.RX(0..7)
+  // read (8) 16-bit registers starting at NANO_AI(0) to RX buffer
+  // data is available via nanoLC.GetResponseBuffer(0..7)
   nanoLC.ReadInputRegisters(NANO_AI(0), 8);
 }

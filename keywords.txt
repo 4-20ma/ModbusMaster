@@ -16,9 +16,11 @@ MBSerial	KEYWORD1
 lowWord	KEYWORD2
 highWord	KEYWORD2
 LONG	KEYWORD2
-
 begin	KEYWORD2
-
+GetResponseBuffer	KEYWORD2
+ClearResponseBuffer	KEYWORD2
+SetTransmitBuffer	KEYWORD2
+ClearTransmitBuffer	KEYWORD2
 ReadCoils	KEYWORD2
 ReadDiscreteInputs	KEYWORD2
 ReadHoldingRegisters	KEYWORD2
@@ -30,9 +32,6 @@ WriteMultipleRegisters	KEYWORD2
 MaskWriteRegister	KEYWORD2
 ReadWriteMultipleRegisters	KEYWORD2
 
-RX	KEYWORD2
-TX	KEYWORD2
-
 #######################################
 # Constants (LITERAL1)
 #######################################
@@ -42,9 +41,6 @@ ku8MBIllegalDataAddress	LITERAL1
 ku8MBIllegalDataValue	LITERAL1
 ku8MBSlaveDeviceFailure	LITERAL1
 ku8MBSuccess	LITERAL1
-
-ku8MBInvalidRequestADUSize	LITERAL1
-ku8MBInvalidResponseADUSize	LITERAL1
 ku8MBInvalidSlaveID	LITERAL1
 ku8MBInvalidFunction	LITERAL1
 ku8MBResponseTimedOut	LITERAL1

@@ -25,6 +25,7 @@
 
 #include <ModbusMaster.h>
 
+
 // instantiate ModbusMaster object as slave ID 2
 // defaults to serial port 0 since no port was specified
 ModbusMaster node(2);
@@ -45,16 +46,16 @@ void loop()
   
   i++;
   
-  // set word 0 of TX to least-significant word of counter (bits 15..0)
-  node.TX(0, lowWord(i));
+  // set word 0 of TX buffer to least-significant word of counter (bits 15..0)
+  node.SetTransmitBuffer(0, lowWord(i));
   
-  // set word 1 of TX to most-significant word of counter (bits 31..16)
-  node.TX(1, highWord(i));
+  // set word 1 of TX buffer to most-significant word of counter (bits 31..16)
+  node.SetTransmitBuffer(1, highWord(i));
   
-  // slave 1: write TX to (2) 16-bit registers starting at register 0
+  // slave 1: write TX buffer to (2) 16-bit registers starting at register 0
   result = node.WriteMultipleRegisters(0, 2);
   
-  // slave 1: read (6) 16-bit registers starting at register 2 to RX
+  // slave 1: read (6) 16-bit registers starting at register 2 to RX buffer
   result = node.ReadHoldingRegisters(2, 6);
   
   // do something with data if read is successful
@@ -62,7 +63,7 @@ void loop()
   {
     for (j = 0; j < 6; j++)
     {
-      data[j] = node.RX(j);
+      data[j] = node.GetResponseBuffer(j);
     }
   }
 }
