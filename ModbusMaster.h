@@ -10,7 +10,8 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 */
 /*
 
-  ModbusMaster.h - library implementing a Modbus RTU Master for Arduino
+  ModbusMaster.h - Arduino library for communicating with Modbus slaves
+  over RS232/485 (via RTU protocol).
   
   This file is part of ModbusMaster.
   
@@ -37,6 +38,7 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 #ifndef ModbusMaster_h
 #define ModbusMaster_h
 
+
 /**
 @def __MODBUSMASTER_DEBUG__ (1).
 Set to 1 to enable debugging features within class:
@@ -52,21 +54,26 @@ Set to 1 to enable debugging features within class:
 
 
 /* _____UTILITY MACROS_______________________________________________________ */
-#ifndef lowWord(ww)
-/// @def lowWord(ww) ((uint16_t) ((ww) & 0xFFFF)).
-/// Macro to return low word of a 32-bit integer
+/**
+@def lowWord(ww) ((uint16_t) ((ww) & 0xFFFF))
+Macro to return low word of a 32-bit integer.
+*/
 #define lowWord(ww) ((uint16_t) ((ww) & 0xFFFF))
-#endif
 
-// Macro to return high word of a 32-bit integer
-#ifndef highWord(ww)
+
+/**
+@def highWord(ww) ((uint16_t) ((ww) >> 16))
+Macro to return high word of a 32-bit integer.
+*/
 #define highWord(ww) ((uint16_t) ((ww) >> 16))
-#endif
 
-// Macro to generate 32-bit integer from (2) 16-bit words
-#ifndef LONG(hi, low)
+
+
+/**
+@def LONG(hi, lo) ((uint32_t) ((hi) << 16 | (lo)))
+Macro to generate 32-bit integer from (2) 16-bit words.
+*/
 #define LONG(hi, lo) ((uint32_t) ((hi) << 16 | (lo)))
-#endif
 
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
@@ -85,6 +92,7 @@ class ModbusMaster
     ModbusMaster();
     ModbusMaster(uint8_t);
     ModbusMaster(uint8_t, uint8_t);
+    
     void begin();
     void begin(uint16_t);
     
@@ -200,22 +208,21 @@ class ModbusMaster
     */
     static const uint8_t ku8MBInvalidCRC                 = 0xE3;
     
-    uint16_t GetResponseBuffer(uint8_t);
-    void ClearResponseBuffer();
-    uint8_t SetTransmitBuffer(uint8_t, uint16_t);
-    void ClearTransmitBuffer();
+    uint16_t getResponseBuffer(uint8_t);
+    void     clearResponseBuffer();
+    uint8_t  setTransmitBuffer(uint8_t, uint16_t);
+    void     clearTransmitBuffer();
     
-    uint8_t ReadCoils(uint16_t, uint16_t);
-    uint8_t ReadDiscreteInputs(uint16_t, uint16_t);
-    uint8_t ReadHoldingRegisters(uint16_t, uint16_t);
-    uint8_t ReadInputRegisters(uint16_t, uint8_t);
-    uint8_t WriteSingleCoil(uint16_t, uint8_t);
-    uint8_t WriteSingleRegister(uint16_t, uint16_t);
-    uint8_t WriteMultipleCoils(uint16_t, uint16_t);
-    uint8_t WriteMultipleRegisters(uint16_t, uint16_t);
-    uint8_t MaskWriteRegister(uint16_t, uint16_t, uint16_t);
-    uint8_t ReadWriteMultipleRegisters(uint16_t, uint16_t, uint16_t, uint16_t);
-      
+    uint8_t  readCoils(uint16_t, uint16_t);
+    uint8_t  readDiscreteInputs(uint16_t, uint16_t);
+    uint8_t  readHoldingRegisters(uint16_t, uint16_t);
+    uint8_t  readInputRegisters(uint16_t, uint8_t);
+    uint8_t  writeSingleCoil(uint16_t, uint8_t);
+    uint8_t  writeSingleRegister(uint16_t, uint16_t);
+    uint8_t  writeMultipleCoils(uint16_t, uint16_t);
+    uint8_t  writeMultipleRegisters(uint16_t, uint16_t);
+    uint8_t  maskWriteRegister(uint16_t, uint16_t, uint16_t);
+    uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t, uint16_t, uint16_t);
     
   private:
     uint8_t  _u8SerialPort;                                      ///< serial port (0..3) initialized in constructor

@@ -4,7 +4,8 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 */
 /*
 
-  ModbusMaster.cpp - library implementing a Modbus RTU Master for Arduino
+  ModbusMaster.cpp - Arduino library for communicating with Modbus slaves
+  over RS232/485 (via RTU protocol).
   
   This file is part of ModbusMaster.
   
@@ -26,9 +27,6 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
   $Id$
   
 */
-
-
-/* _____STANDARD INCLUDES____________________________________________________ */
 
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
@@ -146,12 +144,12 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
 /**
 Retrieve data from response buffer.
 
-@see ModbusMaster::ClearResponseBuffer()
+@see ModbusMaster::clearResponseBuffer()
 @param u8Index index of response buffer array (0x00..0x3F)
 @return value in position u8Index of response buffer (0x0000..0xFFFF)
 @ingroup buffer
 */
-uint16_t ModbusMaster::GetResponseBuffer(uint8_t u8Index)
+uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
 {
   if (u8Index < ku8MaxBufferSize)
   {
@@ -167,10 +165,10 @@ uint16_t ModbusMaster::GetResponseBuffer(uint8_t u8Index)
 /**
 Clear Modbus response buffer.
 
-@see ModbusMaster::GetResponseBuffer(uint8_t u8Index)
+@see ModbusMaster::getResponseBuffer(uint8_t u8Index)
 @ingroup buffer
 */
-void ModbusMaster::ClearResponseBuffer()
+void ModbusMaster::clearResponseBuffer()
 {
   uint8_t i;
   
@@ -184,13 +182,13 @@ void ModbusMaster::ClearResponseBuffer()
 /**
 Place data in transmit buffer.
 
-@see ModbusMaster::ClearTransmitBuffer()
+@see ModbusMaster::clearTransmitBuffer()
 @param u8Index index of transmit buffer array (0x00..0x3F)
 @param u16Value value to place in position u8Index of transmit buffer (0x0000..0xFFFF)
 @return 0 on success; exception number on failure
 @ingroup buffer
 */
-uint8_t ModbusMaster::SetTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
+uint8_t ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
 {
   if (u8Index < ku8MaxBufferSize)
   {
@@ -207,10 +205,10 @@ uint8_t ModbusMaster::SetTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
 /**
 Clear Modbus transmit buffer.
 
-@see ModbusMaster::SetTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
+@see ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
 @ingroup buffer
 */
-void ModbusMaster::ClearTransmitBuffer()
+void ModbusMaster::clearTransmitBuffer()
 {
   uint8_t i;
   
@@ -244,7 +242,7 @@ order end of the word).
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::ReadCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
+uint8_t ModbusMaster::readCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16BitQty;
@@ -275,7 +273,7 @@ order end of the word).
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::ReadDiscreteInputs(uint16_t u16ReadAddress,
+uint8_t ModbusMaster::readDiscreteInputs(uint16_t u16ReadAddress,
   uint16_t u16BitQty)
 {
   _u16ReadAddress = u16ReadAddress;
@@ -300,7 +298,7 @@ register.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::ReadHoldingRegisters(uint16_t u16ReadAddress,
+uint8_t ModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress,
   uint16_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
@@ -325,7 +323,7 @@ register.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::ReadInputRegisters(uint16_t u16ReadAddress,
+uint8_t ModbusMaster::readInputRegisters(uint16_t u16ReadAddress,
   uint8_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
@@ -348,7 +346,7 @@ address of the coil to be forced. Coils are addressed starting at zero.
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::WriteSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
+uint8_t ModbusMaster::writeSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = (u8State ? 0xFF00 : 0x0000);
@@ -368,7 +366,7 @@ written. Registers are addressed starting at zero.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::WriteSingleRegister(uint16_t u16WriteAddress,
+uint8_t ModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
   uint16_t u16WriteValue)
 {
   _u16WriteAddress = u16WriteAddress;
@@ -394,7 +392,7 @@ corresponding output to be ON. A logical '0' requests it to be OFF.
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::WriteMultipleCoils(uint16_t u16WriteAddress,
+uint8_t ModbusMaster::writeMultipleCoils(uint16_t u16WriteAddress,
   uint16_t u16BitQty)
 {
   _u16WriteAddress = u16WriteAddress;
@@ -417,7 +415,7 @@ is packed as one word per register.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::WriteMultipleRegisters(uint16_t u16WriteAddress,
+uint8_t ModbusMaster::writeMultipleRegisters(uint16_t u16WriteAddress,
   uint16_t u16WriteQty)
 {
   _u16WriteAddress = u16WriteAddress;
@@ -448,7 +446,7 @@ Result = (Current Contents && And_Mask) || (Or_Mask && (~And_Mask))
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::MaskWriteRegister(uint16_t u16WriteAddress,
+uint8_t ModbusMaster::maskWriteRegister(uint16_t u16WriteAddress,
   uint16_t u16AndMask, uint16_t u16OrMask)
 {
   _u16WriteAddress = u16WriteAddress;
@@ -478,7 +476,7 @@ buffer.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::ReadWriteMultipleRegisters(uint16_t u16ReadAddress,
+uint8_t ModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress,
   uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty)
 {
   _u16ReadAddress = u16ReadAddress;
