@@ -679,21 +679,12 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         case ku8MBWriteSingleCoil:
         case ku8MBWriteMultipleCoils:
         case ku8MBWriteSingleRegister:
+        case ku8MBWriteMultipleRegisters:
           u8BytesLeft = 3;
           break;
           
         case ku8MBMaskWriteRegister:
           u8BytesLeft = 5;
-          break;
-      }
-    }
-    
-    if (u8ModbusADUSize == 6)
-    {
-      switch(u8ModbusADU[1])
-      {
-        case ku8MBWriteMultipleRegisters:
-          u8BytesLeft = u8ModbusADU[5];
           break;
       }
     }
