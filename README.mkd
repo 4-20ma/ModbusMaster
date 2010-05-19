@@ -28,7 +28,7 @@ Arduino 17 (or later):
 
 Arduino 16 (or earlier):
 
-  Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO`_`HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
+  Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
 ##Support##
 Please report any bugs on the [Issue Tracker](http://code.google.com/p/modbusmaster/issues/list).
