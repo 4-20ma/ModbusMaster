@@ -19,7 +19,6 @@
   
   Written by Doc Walker (Rx)
   Copyright © 2009, 2010 Doc Walker <dfwmountaineers at gmail dot com>
-  $Id$
   
 */
 
