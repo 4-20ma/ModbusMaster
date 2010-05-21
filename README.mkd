@@ -22,13 +22,11 @@ Arduinos prior to the Mega have one serial port which must be connected to USB (
 This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc/en/Main/ArduinoBoardDuemilanove), PHOENIX CONTACT [nanoLine](http://www.phoenixcontact.com/automation/34197.htm) controller, connected via RS485 using a Maxim [MAX488EPA](http://www.maxim-ic.com/quick_view2.cfm/qv_pk/1111) transceiver.
 
 ##Installation##
-  * Arduino 17 (or later):
-  
-    Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
+Arduino 17 (or later):
+: Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
 
-  * Arduino 16 (or earlier):
-
-    Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
+Arduino 16 (or earlier):
+: Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
 ##Support##
 Please report any bugs on the [Issue Tracker](/dfwmountaineers/ModbusMaster/issues).
@@ -37,14 +35,14 @@ Please report any bugs on the [Issue Tracker](/dfwmountaineers/ModbusMaster/issu
 I can be contacted at dfwmountaineers at gmail.
 
 ##History##
-Date     | Rev             | Description
-:-------:|:---------------:|:-----------:
-9 Feb 10 | v0.7            |Modified capitalization of functions to match Arduino style where first letter is lower-case
-4 Feb 10 |v0.6 is available|Added documentation via Doxygen comments, modified methods used to get/set storage buffers
-30 Jan 10|v0.5 is available|Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes
-29 Jan 10|v0.3 is available|
-25 Jan 10|v0.2 is available|
-24 Jan 10|Initial public release|
+Date       | Rev             | Description
+:---------:|:---------------:|:-----------:
+9 Feb 10   | v0.7            |Modified capitalization of functions to match Arduino style where first letter is lower-case
+4 Feb 10   |v0.6 is available|Added documentation via Doxygen comments, modified methods used to get/set storage buffers
+30 Jan 10  |v0.5 is available|Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes
+29 Jan 10  |v0.3 is available
+25 Jan 10  |v0.2 is available
+24 Jan 10  |Initial public release
 
 ##Example##
 The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
