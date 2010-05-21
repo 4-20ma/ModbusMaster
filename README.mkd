@@ -65,6 +65,7 @@ I can be contacted at dfwmountaineers at gmail.
     <td>24 Jan 10</td>
     <td>Initial public release.</td>
   </tr>
+</table>
 
 ##Example##
 The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
