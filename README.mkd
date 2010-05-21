@@ -4,21 +4,21 @@ This is an Arduino class library for communicating with Modbus slaves over RS232
 ##Features##
 The following Modbus functions have been implemented:
 
-Discrete Coils/Flags:
+* Discrete Coils/Flags
 
-  * 0x01 - Read Coils
-  * 0x02 - Read Discrete Inputs
-  * 0x05 - Write Single Coil
-  * 0x0F - Write Multiple Coils
+  0x01 - Read Coils
+  0x02 - Read Discrete Inputs
+  0x05 - Write Single Coil
+  0x0F - Write Multiple Coils
 
-Registers:
+* Registers
 
-  * 0x03 - Read Holding Registers
-  * 0x04 - Read Input Registers
-  * 0x06 - Write Single Register
-  * 0x10 - Write Multiple Registers
-  * 0x16 - Mask Write Register
-  * 0x17 - Read Write Multiple Registers
+  0x03 - Read Holding Registers
+  0x04 - Read Input Registers
+  0x06 - Write Single Register
+  0x10 - Write Multiple Registers
+  0x16 - Mask Write Register
+  0x17 - Read Write Multiple Registers
 
 ##Uploading Sketches##
 Arduinos prior to the Mega have one serial port which must be connected to USB (FTDI) for uploading sketches and to the RS232/485 device/network for running sketches. You will need to disconnect pin 0 (RX) while uploading sketches. After a successful upload, you can reconnect pin 0.
