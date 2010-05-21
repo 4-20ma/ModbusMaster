@@ -37,15 +37,14 @@ Please report any bugs on the [Issue Tracker](/dfwmountaineers/ModbusMaster/issu
 I can be contacted at dfwmountaineers at gmail.
 
 ##History##
-<table>
-  <tr><th>Date<th>Rev<th>Description
-  <tr><td>9 Feb 10<td>v0.7<td>Modified capitalization of functions to match Arduino style where first letter is lower-case.
-  <tr><td>4 Feb 10<td>v0.6 is available.<td>Added documentation via Doxygen comments, modified methods used to get/set storage buffers.
-  <tr><td>30 Jan 10<td>v0.5 is available.<td>Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes.
-  <tr><td>29 Jan 10<td>v0.3 is available.
-  <tr><td>25 Jan 10<td>v0.2 is available.
-  <tr><td>24 Jan 10<td>Initial public release.
-</table>
+| Date    | Rev             | Description |
+|:-------:|:---------------:|:-----------:|
+|9 Feb 10 | v0.7            |Modified capitalization of functions to match Arduino style where first letter is lower-case|
+|4 Feb 10 |v0.6 is available|Added documentation via Doxygen comments, modified methods used to get/set storage buffers   |
+|30 Jan 10|v0.5 is available|Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes|
+|29 Jan 10|v0.3 is available||
+|25 Jan 10|v0.2 is available||
+|24 Jan 10|Initial public release||
 
 ##Example##
 The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
