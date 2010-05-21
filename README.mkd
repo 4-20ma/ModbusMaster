@@ -24,7 +24,7 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
 ##Installation##
   * Arduino 17 (or later):
   
-  Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
+    Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
 
   * Arduino 16 (or earlier):
 
