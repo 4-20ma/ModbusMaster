@@ -31,7 +31,7 @@ Arduino 16 (or earlier):
     Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
 ##Support##
-Please report any bugs on the [Issue Tracker](/issues).
+Please report any bugs on the [Issue Tracker](/dfwmountaineers/ModbusMaster/issues).
 
 ##Questions/Feedback##
 I can be contacted at dfwmountaineers at gmail.
@@ -45,7 +45,7 @@ I can be contacted at dfwmountaineers at gmail.
   * 24 Jan 10 - Initial public release.
 
 ##Example##
-The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](http://github.com/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
+The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
 
     /*
 
