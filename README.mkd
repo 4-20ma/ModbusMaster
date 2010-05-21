@@ -38,12 +38,13 @@ I can be contacted at dfwmountaineers at gmail.
 
 ##History##
 <table>
-  <tr><th>9 Feb 10<td>v0.7<td>Modified capitalization of functions to match Arduino style where first letter is lower-case.
-  <tr><th>4 Feb 10<td>v0.6 is available.<td>Added documentation via Doxygen comments, modified methods used to get/set storage buffers.
-  <tr><td>30 Jan 10<td>v0.5 is available.<td>Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes.
-  <tr><td>29 Jan 10<td>v0.3 is available.
-  <tr><td>25 Jan 10<td>v0.2 is available.
-  <tr><td>24 Jan 10<td>Initial public release.
+  <tr><th>Date<th>Rev<th>Description
+  <tr>9 Feb 10<td>v0.7<td>Modified capitalization of functions to match Arduino style where first letter is lower-case.
+  <tr>4 Feb 10<td>v0.6 is available.<td>Added documentation via Doxygen comments, modified methods used to get/set storage buffers.
+  <tr>30 Jan 10<td>v0.5 is available.<td>Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes.
+  <tr>29 Jan 10<td>v0.3 is available.
+  <tr>25 Jan 10<td>v0.2 is available.
+  <tr>24 Jan 10<td>Initial public release.
 </table>
 
 ##Example##
