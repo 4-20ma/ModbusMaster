@@ -19,7 +19,7 @@
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009, 2010 Doc Walker <dfwmountaineers at gmail dot com>
+  Copyright Â© 2009-2011 Doc Walker <dfwmountaineers at gmail dot com>
   
 */
 
@@ -138,3 +138,4 @@ void loop()
   // data is available via nanoLC.getResponseBuffer(0..7)
   nanoLC.readInputRegisters(NANO_AI(0), 8);
 }
+
