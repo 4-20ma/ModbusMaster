@@ -116,15 +116,19 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
   
   switch(_u8SerialPort)
   {
-#if defined(__AVR_ATmega1280__)
+#if defined(UBRR1H)
     case 1:
       MBSerial = Serial1;
       break;
+#endif
       
+#if defined(UBRR2H)
     case 2:
       MBSerial = Serial2;
       break;
+#endif
       
+#if defined(UBRR3H)
     case 3:
       MBSerial = Serial3;
       break;
