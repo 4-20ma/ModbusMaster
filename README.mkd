@@ -44,6 +44,7 @@ I can be contacted at dfwmountaineers at gmail.
 ##History##
 Date       | Rev  | Description
 :---------:|:----:|:-----------:
+9-Nov-11   | v0.8 |Add support for ATmega2560
 9-Feb-10   | v0.7 |Modified capitalization of functions to match Arduino style where first letter is lower-case
 4-Feb-10   | v0.6 |Added documentation via Doxygen comments, modified methods used to get/set storage buffers
 30-Jan-10  | v0.5 |Added ability to select serial port 0..3, modified methods used to get/set storage arrays, miscellaneous bug fixes
