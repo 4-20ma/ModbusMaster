@@ -1,5 +1,5 @@
 ##Overview##
-This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). '''Updated to support Arduino 1.0.'''
+This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). **Updated to support Arduino 1.0.**
 
 ##Features##
 The following Modbus functions have been implemented:
