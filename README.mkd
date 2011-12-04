@@ -1,5 +1,5 @@
 ##Overview##
-This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol).
+This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). '''Updated to support Arduino 1.0.'''
 
 ##Features##
 The following Modbus functions have been implemented:
@@ -36,7 +36,7 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
   Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
 ##Support##
-Please report any bugs on the [Issue Tracker](/dfwmountaineers/ModbusMaster/issues).
+Please report any bugs on the [Issue Tracker](/2-718/ModbusMaster/issues).
 
 ##Questions/Feedback##
 I can be contacted at dfwmountaineers at gmail.
@@ -44,6 +44,7 @@ I can be contacted at dfwmountaineers at gmail.
 ##History##
 Date       | Rev  | Description
 :---------:|:----:|:-----------:
+4-Dec-11   | v0.9 |Add support for Arduino 1.0
 9-Nov-11   | v0.8 |Add support for ATmega2560
 9-Feb-10   | v0.7 |Modified capitalization of functions to match Arduino style where first letter is lower-case
 4-Feb-10   | v0.6 |Added documentation via Doxygen comments, modified methods used to get/set storage buffers
@@ -53,7 +54,7 @@ Date       | Rev  | Description
 24-Jan-10  | Initial public release
 
 ##Example##
-The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/dfwmountaineers/ModbusMaster/tree/master/examples/) folder.
+The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/2-718/ModbusMaster/tree/master/examples/) folder.
 
     /*
 
