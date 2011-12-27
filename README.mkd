@@ -43,7 +43,7 @@ I can be contacted at dfwmountaineers at gmail.
 
 ##History##
 Date       | Rev  | Description
-:---------:|:----:|:-----------:
+:---------:|:----:|:-----------
 4-Dec-11   | v0.9 |Add support for Arduino 1.0
 9-Nov-11   | v0.8 |Add support for ATmega2560
 9-Feb-10   | v0.7 |Modified capitalization of functions to match Arduino style where first letter is lower-case
