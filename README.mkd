@@ -39,7 +39,7 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
 Please report any bugs on the [Issue Tracker](/2-718/ModbusMaster/issues).
 
 ##Questions/Feedback##
-I can be contacted at dfwmountaineers at gmail.
+I can be contacted at 4-20ma at wvfans dot net.
 
 ##History##
 Date       | Rev  | Description
@@ -77,7 +77,7 @@ The library contains a few sketches that demonstrate use of the ModbusMaster lib
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009-2011 Doc Walker <dfwmountaineers at gmail dot com>
+  Copyright © 2009-2012 Doc Walker <4-20ma at wvfans dot net>
   
 */
 
