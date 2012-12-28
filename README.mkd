@@ -36,13 +36,13 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
   Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
 ##Support##
-Please report any bugs on the [Issue Tracker](/2-718/ModbusMaster/issues).
+Please report any bugs on the [Issue Tracker](/4-20ma/ModbusMaster/issues).
 
 ##Questions/Feedback##
 I can be contacted at 4-20ma at wvfans dot net.
 
 ##Example##
-The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/2-718/ModbusMaster/tree/master/examples/) folder.
+The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/4-20ma/ModbusMaster/tree/master/examples/) folder.
 
 ```c++
 /*
