@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'fileutils'
 require 'git'
 require 'rake'
 require 'rubygems'
@@ -62,9 +63,29 @@ namespace :prepare do
   
   desc 'Prepare documentation'
   task :documentation do
+    version = Version.current.to_s
+    
+    # update parameters in Doxyfile
+    cwd = File.expand_path(File.dirname(__FILE__))
+    file = File.join(cwd, 'doc', 'Doxyfile')
+    
+    contents = IO.read(file)
+    contents.sub!(/(^PROJECT_NUMBER\s*=)(.*)$/) do |match|
+      "#{$1} v#{version}"
+    end # contents.sub!(...)
+    IO.write(file, contents)
+    
     # chdir to doc/ and call doxygen to update documentation
-    Dir.chdir('doc')
+    Dir.chdir(to = File.join(cwd, 'doc'))
     system('doxygen', 'Doxyfile')
+    
+    # chdir to doc/latex and call doxygen to update documentation
+    Dir.chdir(from = File.join(cwd, 'doc', 'latex'))
+    system('make')
+    
+    # move/rename file to 'doc/GITHUB_REPO reference-x.y.pdf'
+    FileUtils.mv(File.join(from, 'refman.pdf'),
+      File.join(to, "#{GITHUB_REPO} reference-#{version}.pdf"))
   end # task :documentation
   
   desc 'Prepare release history'
