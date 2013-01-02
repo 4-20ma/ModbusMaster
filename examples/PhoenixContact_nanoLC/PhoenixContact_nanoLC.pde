@@ -19,7 +19,7 @@
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009-2011 Doc Walker <4-20ma at wvfans dot net>
+  Copyright © 2009-2013 Doc Walker <4-20ma at wvfans dot net>
   
 */
 
