@@ -1,3 +1,14 @@
+## [v0.9.1 (2013-01-02)](/4-20ma/ModbusMaster/tree/v0.9.1)
+- Add Rakefile to manage prepare/release process
+- Add .gitignore to skip doc/html, doc/latex files
+- Add Doxyfile to repo
+- Update copyright year
+- Update email address
+- Fix references to repo
+- Move history to separate file
+- Update README copyright, email
+
+---
 ## [v0.9 (2011-12-04)](/4-20ma/ModbusMaster/tree/v0.9)
 - Add support for Arduino 1.0
 
