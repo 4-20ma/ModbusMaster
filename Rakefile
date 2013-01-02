@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-require 'fileutils'
 require 'git'
 require 'rake'
 require 'rubygems'
