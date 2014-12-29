@@ -743,6 +743,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
   
+  // make sure input buffer is clear
+  while (MBSerial.read() != -1)
+    ;
+    
   // transmit request
   for (i = 0; i < u8ModbusADUSize; i++)
   {
@@ -832,7 +836,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if (millis() > (u32StartTime + ku8MBResponseTimeout))
+    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
