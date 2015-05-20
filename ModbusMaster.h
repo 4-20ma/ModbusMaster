@@ -80,7 +80,7 @@ Macro to generate 32-bit integer from (2) 16-bit words.
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 // functions to calculate Modbus Application Data Unit CRC
-#include <util/crc16.h>
+#include "util/crc16.h"
 
 
 /* _____CLASS DEFINITIONS____________________________________________________ */

@@ -737,7 +737,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u16CRC = 0xFFFF;
   for (i = 0; i < u8ModbusADUSize; i++)
   {
-    u16CRC = _crc16_update(u16CRC, u8ModbusADU[i]);
+    u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
   }
   u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
@@ -845,7 +845,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     u16CRC = 0xFFFF;
     for (i = 0; i < (u8ModbusADUSize - 2); i++)
     {
-      u16CRC = _crc16_update(u16CRC, u8ModbusADU[i]);
+      u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
     }
     
     // verify CRC
