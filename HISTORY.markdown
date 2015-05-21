@@ -1,3 +1,8 @@
+## [v0.10.1 (2015-05-20)](/4-20ma/ModbusMaster/tree/v0.10.1)
+- Update Rakefile to commit Doxyfile, reference
+- Version bump to v0.10.0
+
+---
 ## [v0.10.0 (2015-05-20)](/4-20ma/ModbusMaster/tree/v0.10.0)
 - Update Rakefile to update library.properties
 - Add library.properties file to describe library
