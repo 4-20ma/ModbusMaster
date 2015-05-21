@@ -1,3 +1,26 @@
+## [v0.10.0 (2015-05-20)](/4-20ma/ModbusMaster/tree/v0.10.0)
+- Update Rakefile to update library.properties
+- Add library.properties file to describe library
+- Add .ruby-* to manage versions via rvm or rbenv
+- Add Gemfile to manage dependencies via Bundler
+- Update .gitignore to exclude Gemfile.lock
+- Work around HardwareSerial for SAM3 micro
+    - add #ifdefs to check for presence of AVR or ARM chipset (use HardwareSerial for AVR and UARTClass for ARM)
+    - change MBSerial to pointer and update all references to use -> notation instead of . notation
+- Implement CRC16 for SAM3X8E microprocessor
+    - renamed _crc16_update to crc16_update to minimize confusion with AVR function in util/crc16.h
+    - added C version of crc16 and removed extraneous version of crc16 functions
+- Add end-of-life note to README
+- Add auto-generated pdf documentation for v0.9.1
+- Remove pdf documentation for versions 0.6, 0.7
+- Add pdf documentation for versions 0.6, 0.7
+- Remove unnecessary require 'fileutils'
+- Add auto-generated pdf documentation
+- Define PROJECT_BRIEF tag in Doxyfile
+- Add pdf generation to prepare:documentation
+- Add doc/README.txt
+
+---
 ## [v0.9.1 (2013-01-02)](/4-20ma/ModbusMaster/tree/v0.9.1)
 - Add Rakefile to manage prepare/release process
 - Add .gitignore to skip doc/html, doc/latex files
