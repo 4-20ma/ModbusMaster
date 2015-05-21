@@ -16,6 +16,7 @@ GITHUB_USERNAME = '4-20ma'
 GITHUB_REPO     = 'ModbusMaster'
 HEADER_FILE     = "#{GITHUB_REPO}.h"
 HISTORY_FILE    = 'HISTORY.markdown'
+PROPERTIES_FILE = 'library.properties'
 VERSION_FILE    = Version.version_file('').basename.to_s
 
 
@@ -58,7 +59,12 @@ desc 'Prepare HISTORY file for release'
 task :prepare => 'prepare:default'
 
 namespace :prepare do
-  task :default => [:release_date, :history, :documentation]
+  task :default => [
+    :release_date,
+    :library_properties,
+    :history,
+    :documentation
+  ]
   
   desc 'Prepare documentation'
   task :documentation do
@@ -111,6 +117,20 @@ namespace :prepare do
     IO.write(file, history << contents)
   end # task :history
   
+  desc 'Update version in library properties file'
+  task :library_properties do
+    version = Version.current.to_s
+
+    cwd = File.expand_path(File.dirname(__FILE__))
+    file = File.join(cwd, PROPERTIES_FILE)
+
+    contents = IO.read(file)
+    contents.sub!(/(version=\s*)(.*)$/) do |match|
+      "#{$1}#{version}"
+    end # contents.sub!(...)
+    IO.write(file, contents)
+  end # task :library_properties
+
   desc 'Update release date in header file'
   task :release_date do
     cwd = File.expand_path(File.dirname(__FILE__))
@@ -161,7 +181,7 @@ namespace :release do
   desc 'Commit source changes related to version bump'
   task :source do
     version = Version.current.to_s
-    `git add #{HEADER_FILE} #{HISTORY_FILE} #{VERSION_FILE}`
+    `git add #{HEADER_FILE} #{HISTORY_FILE} #{PROPERTIES_FILE} #{VERSION_FILE}`
     `git commit -m 'Version bump to v#{version}'`
     `git tag -a -f -m 'Version v#{version}' v#{version}`
     `git push origin master`
