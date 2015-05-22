@@ -166,7 +166,7 @@ uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
 {
   uint8_t read;
   // clamp to buffer length
-  if(quantity > ku8MaxBufferSize)
+  if (quantity > ku8MaxBufferSize)
   {
     quantity = ku8MaxBufferSize;
   }
@@ -748,7 +748,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
-  
+
+  // flush receive buffer before transmitting request
+  while (MBSerial->read() != -1);
+
   // transmit request
   for (i = 0; i < u8ModbusADUSize; i++)
   {
@@ -760,7 +763,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   }
   
   u8ModbusADUSize = 0;
-  MBSerial->flush();
+  MBSerial->flush();    // flush transmit buffer
   
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();
@@ -838,7 +841,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if (millis() > (u32StartTime + ku8MBResponseTimeout))
+    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
