@@ -1,7 +1,13 @@
-##Overview##
-This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). **Updated to support Arduino 1.0.**
+ModbusMaster
+============
 
-##Features##
+Overview
+--------
+This is an Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol). **Updated to support Arduino 1.6.**
+
+
+Features
+--------
 The following Modbus functions have been implemented:
 
 Discrete Coils/Flags
@@ -20,13 +26,19 @@ Registers
   * 0x16 - Mask Write Register
   * 0x17 - Read Write Multiple Registers
 
-##Uploading Sketches##
+
+Uploading Sketches
+------------------
 Arduinos prior to the Mega have one serial port which must be connected to USB (FTDI) for uploading sketches and to the RS232/485 device/network for running sketches. You will need to disconnect pin 0 (RX) while uploading sketches. After a successful upload, you can reconnect pin 0.
 
-##Hardware##
-This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc/en/Main/ArduinoBoardDuemilanove), PHOENIX CONTACT [nanoLine](http://www.phoenixcontact.com/automation/34197.htm) controller, connected via RS485 using a Maxim [MAX488EPA](http://www.maxim-ic.com/quick_view2.cfm/qv_pk/1111) transceiver.
 
-##Installation##
+Hardware
+--------
+This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc/en/Main/ArduinoBoardDuemilanove), PHOENIX CONTACT [nanoLine](https://www.phoenixcontact.com/online/portal/us?1dmy&urile=wcm%3apath%3a/usen/web/main/products/subcategory_pages/standard_logic_modules_p-21-03-03/3329dd38-7c6a-46e1-8260-b9208235d6fe/3329dd38-7c6a-46e1-8260-b9208235d6fe) controller, connected via RS485 using a Maxim [MAX488EPA](http://www.maxim-ic.com/quick_view2.cfm/qv_pk/1111) transceiver.
+
+
+Installation
+------------
 * Arduino 17 (or later):
 
   Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
@@ -35,13 +47,19 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
 
   Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
 
-##Support##
+
+Support
+-------
 Please report any bugs on the [Issue Tracker](/4-20ma/ModbusMaster/issues).
 
-##Questions/Feedback##
+
+Questions/Feedback
+------------------
 I can be contacted at 4-20ma at wvfans dot net.
 
-##Example##
+
+Example
+-------
 The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/4-20ma/ModbusMaster/tree/master/examples/) folder.
 
 ```c++
