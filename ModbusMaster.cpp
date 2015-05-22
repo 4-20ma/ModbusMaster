@@ -33,12 +33,12 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 
 
 /* _____GLOBAL VARIABLES_____________________________________________________ */
-#ifdef __AVR__
+#if defined(ARDUINO_ARCH_AVR)
   HardwareSerial* MBSerial = &Serial; ///< Pointer to Serial class object
-#endif
-
-#ifdef __arm__
+#elif defined(ARDUINO_ARCH_SAM)
   UARTClass* MBSerial = &Serial; ///< Pointer to Serial class object
+#else
+  #error "This library only supports boards with an AVR or SAM processor. Please open an issue at https://github.com/4-20ma/ModbusMaster/issues and indicate which processor/platform you're using."
 #endif
 
 
