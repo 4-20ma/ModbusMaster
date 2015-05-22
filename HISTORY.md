@@ -1,3 +1,17 @@
+## [v0.10.2 (2015-05-21)](/4-20ma/ModbusMaster/tree/v0.10.2)
+- Update documentation after resolving doc build err
+- Fix documentation build error
+- Update library.properties
+- Add README badges for tag, license
+- Update README
+    - Replace **Heading** with Heading followed by ------- line for cleaner Markdown syntax
+    - Update Arduino version note to 1.6
+    - Fix nanoline URL
+- Remove deprecation note from README
+- Update pointers to match C++ convention
+- Rename markdown file extensions
+
+---
 ## [v0.10.1 (2015-05-20)](/4-20ma/ModbusMaster/tree/v0.10.1)
 - Update Rakefile to commit Doxyfile, reference
 - Version bump to v0.10.0
