@@ -17,7 +17,7 @@ DOXYFILE        = 'Doxyfile'
 GITHUB_USERNAME = '4-20ma'
 GITHUB_REPO     = 'ModbusMaster'
 HEADER_FILE     = "#{GITHUB_REPO}.h"
-HISTORY_FILE    = 'HISTORY.markdown'
+HISTORY_FILE    = 'HISTORY.md'
 PROPERTIES_FILE = 'library.properties'
 VERSION_FILE    = Version.version_file('').basename.to_s
 
@@ -37,11 +37,11 @@ task :info do
     $ rake version:bump:major     # or
     edit 'VERSION' file directly
     
-  - Prepare release date, 'HISTORY.markdown' file, documentation:
+  - Prepare release date, 'HISTORY.md' file, documentation:
   
     $ rake prepare
     
-  - Review changes to 'HISTORY.markdown' file
+  - Review changes to 'HISTORY.md' file
     This file is assembled using git commit messages; review for completeness.
   
   - Review html documentation files
