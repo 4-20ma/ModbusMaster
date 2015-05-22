@@ -32,7 +32,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">ModbusMaster
-   &#160;<span id="projectnumber">v0.10.2</span>
+   &#160;<span id="projectnumber">v0.10.3</span>
    </div>
    <div id="projectbrief">Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol).</div>
   </td>
@@ -118,6 +118,7 @@ $(document).ready(function(){initNavTree('_modbus_master_8h.html','');});
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;WProgram.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="crc16_8h_source.html">util/crc16.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="word_8h_source.html">util/word.h</a>&quot;</code><br />
 </div>
 <p><a href="_modbus_master_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -132,18 +133,6 @@ Macros</h2></td></tr>
 <tr class="memitem:abb22687f4903e47af5f9ac7bcde836ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_modbus_master_8h.html#abb22687f4903e47af5f9ac7bcde836ba">__MODBUSMASTER_DEBUG__</a>&#160;&#160;&#160;(1)</td></tr>
 <tr class="memdesc:abb22687f4903e47af5f9ac7bcde836ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set to 1 to enable debugging features within class:  <a href="#abb22687f4903e47af5f9ac7bcde836ba">More...</a><br /></td></tr>
 <tr class="separator:abb22687f4903e47af5f9ac7bcde836ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff05c40420461959a251cf87826c9965"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff05c40420461959a251cf87826c9965"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_modbus_master_8h.html#aff05c40420461959a251cf87826c9965">lowWord</a>(ww)&#160;&#160;&#160;((uint16_t) ((ww) &amp; 0xFFFF))</td></tr>
-<tr class="memdesc:aff05c40420461959a251cf87826c9965"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to return low word of a 32-bit integer. <br /></td></tr>
-<tr class="separator:aff05c40420461959a251cf87826c9965"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd63f507ecb8460a655e7f729e0e1842"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd63f507ecb8460a655e7f729e0e1842"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_modbus_master_8h.html#abd63f507ecb8460a655e7f729e0e1842">highWord</a>(ww)&#160;&#160;&#160;((uint16_t) ((ww) &gt;&gt; 16))</td></tr>
-<tr class="memdesc:abd63f507ecb8460a655e7f729e0e1842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to return high word of a 32-bit integer. <br /></td></tr>
-<tr class="separator:abd63f507ecb8460a655e7f729e0e1842"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcdd451c011381d0a9c54a8fff65a78e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcdd451c011381d0a9c54a8fff65a78e"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_modbus_master_8h.html#adcdd451c011381d0a9c54a8fff65a78e">LONG</a>(hi,  lo)&#160;&#160;&#160;((uint32_t) ((hi) &lt;&lt; 16 | (lo)))</td></tr>
-<tr class="memdesc:adcdd451c011381d0a9c54a8fff65a78e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro to generate 32-bit integer from (2) 16-bit words. <br /></td></tr>
-<tr class="separator:adcdd451c011381d0a9c54a8fff65a78e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol). </p>

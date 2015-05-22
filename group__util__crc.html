@@ -32,7 +32,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">ModbusMaster
-   &#160;<span id="projectnumber">v0.10.2</span>
+   &#160;<span id="projectnumber">v0.10.3</span>
    </div>
    <div id="projectbrief">Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol).</div>
   </td>
@@ -100,16 +100,79 @@ $(document).ready(function(){initNavTree('group__util__crc.html','');});
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">&lt;util/crc16.h&gt;: CRC Computations</div>  </div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga3185a4c5fe188c6bc16ce4f8dc03facf"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__util__crc.html#ga3185a4c5fe188c6bc16ce4f8dc03facf">crc16_update</a> (uint16_t crc, uint8_t a)</td></tr>
+<tr class="memdesc:ga3185a4c5fe188c6bc16ce4f8dc03facf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processor-independent CRC-16 calculation.  <a href="#ga3185a4c5fe188c6bc16ce4f8dc03facf">More...</a><br /></td></tr>
+<tr class="separator:ga3185a4c5fe188c6bc16ce4f8dc03facf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="crc16_8h.html">util/crc16.h</a>&gt;</span></div>
 </div><!-- fragment --><p>This header file provides functions for calculating cyclic redundancy checks (CRC) using common polynomials. Modified by Doc Walker to be processor-independent (removed inline assembler to allow it to compile on SAM3X8E processors).</p>
 <dl class="section user"><dt>References:</dt><dd></dd></dl>
 <dl class="section user"><dt></dt><dd></dd></dl>
 <p>Jack Crenshaw's "Implementing CRCs" article in the January 1992 isue of <em>Embedded</em> <em>Systems</em> <em>Programming</em>. This may be difficult to find, but it explains CRC's in very clear and concise terms. Well worth the effort to obtain a copy. </p>
+<h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="ga3185a4c5fe188c6bc16ce4f8dc03facf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static uint16_t crc16_update </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>crc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>a</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Processor-independent CRC-16 calculation. </p>
+<p>Polynomial: x^16 + x^15 + x^2 + 1 (0xa001)<br />
+ Initial value: 0xffff</p>
+<p>This CRC is normally used in disk-drive controllers.</p>
+<div class="fragment"><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;{</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">int</span> i;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  crc ^= a;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">for</span> (i = 0; i &lt; 8; ++i)</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">if</span> (crc &amp; 1)</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      crc = (crc &gt;&gt; 1) ^ 0xA001;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      crc = (crc &gt;&gt; 1);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordflow">return</span> crc;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
+</div><!-- fragment -->
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
