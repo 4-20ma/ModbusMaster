@@ -56,31 +56,14 @@ Set to 1 to enable debugging features within class:
 #endif
 
 /* _____UTILITY MACROS_______________________________________________________ */
-/**
-@def lowWord(ww) ((uint16_t) ((ww) & 0xFFFF))
-Macro to return low word of a 32-bit integer.
-*/
-#define lowWord(ww) ((uint16_t) ((ww) & 0xFFFF))
-
-
-/**
-@def highWord(ww) ((uint16_t) ((ww) >> 16))
-Macro to return high word of a 32-bit integer.
-*/
-#define highWord(ww) ((uint16_t) ((ww) >> 16))
-
-
-
-/**
-@def LONG(hi, lo) ((uint32_t) ((hi) << 16 | (lo)))
-Macro to generate 32-bit integer from (2) 16-bit words.
-*/
-#define LONG(hi, lo) ((uint32_t) ((hi) << 16 | (lo)))
 
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 // functions to calculate Modbus Application Data Unit CRC
 #include "util/crc16.h"
+
+// functions to manipulate words
+#include "util/word.h"
 
 
 /* _____CLASS DEFINITIONS____________________________________________________ */
