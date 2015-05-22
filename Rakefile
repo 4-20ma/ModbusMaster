@@ -102,7 +102,8 @@ namespace :prepare do
     prior_tag = g.tags.last
     
     history = "## [v#{current_tag} (#{Time.now.strftime('%Y-%m-%d')})]"
-    history << "(/#{GITHUB_USERNAME}/#{GITHUB_REPO}/tree/v#{current_tag})\n"
+    history << "(https://github.com/#{GITHUB_USERNAME}/#{GITHUB_REPO}/tree"
+    history << "/v#{current_tag})\n"
     
     commits = prior_tag ? g.log.between(prior_tag) : g.log
     history << commits.map do |commit|
