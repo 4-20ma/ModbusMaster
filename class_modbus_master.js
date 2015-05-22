@@ -67,6 +67,6 @@ var class_modbus_master =
     [ "ku8MBWriteMultipleRegisters", "class_modbus_master.html#adf1f58e7806d4c7bc1638255e2639b86", null ],
     [ "ku8MBMaskWriteRegister", "class_modbus_master.html#a1de5e699bcada855fb26e336d2cd2cd3", null ],
     [ "ku8MBReadWriteMultipleRegisters", "class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263", null ],
-    [ "ku8MBResponseTimeout", "class_modbus_master.html#ac9c5d42e3b5cd7ec40ce0c86f6fc1772", null ],
+    [ "ku16MBResponseTimeout", "class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2", null ],
     [ "_idle", "class_modbus_master.html#ab68156649f2938a966192c69834342e8", null ]
 ];

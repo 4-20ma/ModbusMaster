@@ -32,7 +32,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">ModbusMaster
-   &#160;<span id="projectnumber">v0.10.3</span>
+   &#160;<span id="projectnumber">v0.11.0</span>
    </div>
    <div id="projectbrief">Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol).</div>
   </td>
@@ -358,10 +358,10 @@ static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class
 static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263">ku8MBReadWriteMultipleRegisters</a> = 0x17</td></tr>
 <tr class="memdesc:af1c77f6f5f7e0f19d0c9b9916dca2263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modbus function 0x17 Read Write Multiple Registers. <br /></td></tr>
 <tr class="separator:af1c77f6f5f7e0f19d0c9b9916dca2263"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9c5d42e3b5cd7ec40ce0c86f6fc1772"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9c5d42e3b5cd7ec40ce0c86f6fc1772"></a>
-static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_modbus_master.html#ac9c5d42e3b5cd7ec40ce0c86f6fc1772">ku8MBResponseTimeout</a> = 200</td></tr>
-<tr class="memdesc:ac9c5d42e3b5cd7ec40ce0c86f6fc1772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modbus timeout [milliseconds]. <br /></td></tr>
-<tr class="separator:ac9c5d42e3b5cd7ec40ce0c86f6fc1772"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31d5f182084de9eaa76ff24f7ca736c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31d5f182084de9eaa76ff24f7ca736c2"></a>
+static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2">ku16MBResponseTimeout</a> = 2000</td></tr>
+<tr class="memdesc:a31d5f182084de9eaa76ff24f7ca736c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modbus timeout [milliseconds]. <br /></td></tr>
+<tr class="separator:a31d5f182084de9eaa76ff24f7ca736c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). </p>
@@ -530,186 +530,189 @@ static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class
 <div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;  u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);</div>
 <div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;  u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);</div>
 <div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;  u8ModbusADU[u8ModbusADUSize] = 0;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;  </div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;  <span class="comment">// transmit request</span></div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;  <span class="keywordflow">for</span> (i = 0; i &lt; u8ModbusADUSize; i++)</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;  {</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;<span class="preprocessor">#if defined(ARDUINO) &amp;&amp; ARDUINO &gt;= 100</span></div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    MBSerial-&gt;write(u8ModbusADU[i]);</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    MBSerial-&gt;print(u8ModbusADU[i], BYTE);</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;  }</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;  </div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;  u8ModbusADUSize = 0;</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;  MBSerial-&gt;flush();</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;  <span class="comment">// flush receive buffer before transmitting request</span></div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;  <span class="keywordflow">while</span> (MBSerial-&gt;read() != -1);</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;  <span class="comment">// transmit request</span></div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;  <span class="keywordflow">for</span> (i = 0; i &lt; u8ModbusADUSize; i++)</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;  {</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="preprocessor">#if defined(ARDUINO) &amp;&amp; ARDUINO &gt;= 100</span></div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    MBSerial-&gt;write(u8ModbusADU[i]);</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    MBSerial-&gt;print(u8ModbusADU[i], BYTE);</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;  }</div>
 <div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;  </div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;  <span class="comment">// loop until we run out of time or bytes, or an error occurs</span></div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;  u32StartTime = millis();</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;  <span class="keywordflow">while</span> (u8BytesLeft &amp;&amp; !u8MBStatus)</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;  {</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    <span class="keywordflow">if</span> (MBSerial-&gt;available())</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    {</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;      digitalWrite(4, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;      u8ModbusADU[u8ModbusADUSize++] = MBSerial-&gt;read();</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;      u8BytesLeft--;</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;      digitalWrite(4, <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;    }</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;    {</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;      digitalWrite(5, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;      <span class="keywordflow">if</span> (_idle)</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;      {</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;        _idle();</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;      }</div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;      digitalWrite(5, <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    }</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;    </div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;    <span class="comment">// evaluate slave ID, function code once enough bytes have been read</span></div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    <span class="keywordflow">if</span> (u8ModbusADUSize == 5)</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    {</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;      <span class="comment">// verify response is for correct Modbus slave</span></div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;      <span class="keywordflow">if</span> (u8ModbusADU[0] != <a class="code" href="class_modbus_master.html#a8bc19d22b864e85ad67b4b633fa56597">_u8MBSlave</a>)</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;      {</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;        u8MBStatus = <a class="code" href="group__constant.html#ga19521b4671bdc1ded03af72e2f3b958e">ku8MBInvalidSlaveID</a>;</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;      }</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;      </div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;      <span class="comment">// verify response is for correct Modbus function code (mask exception bit 7)</span></div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;      <span class="keywordflow">if</span> ((u8ModbusADU[1] &amp; 0x7F) != u8MBFunction)</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;      {</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;        u8MBStatus = <a class="code" href="group__constant.html#ga31e9072531cf487c137b68b5e1e68926">ku8MBInvalidFunction</a>;</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;      }</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;      </div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;      <span class="comment">// check whether Modbus exception occurred; return Modbus Exception Code</span></div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;      <span class="keywordflow">if</span> (bitRead(u8ModbusADU[1], 7))</div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      {</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;        u8MBStatus = u8ModbusADU[2];</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;      }</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;      </div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;      <span class="comment">// evaluate returned Modbus function code</span></div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;      <span class="keywordflow">switch</span>(u8ModbusADU[1])</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;      {</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ad7e7aa7bed1b86f24bd577725edc633d">ku8MBReadCoils</a>:</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae08306bd72d5487bccf16c12ade79098">ku8MBReadDiscreteInputs</a>:</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443">ku8MBReadInputRegisters</a>:</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae6995c167c152d96b06a918869c03623">ku8MBReadHoldingRegisters</a>:</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263">ku8MBReadWriteMultipleRegisters</a>:</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;          u8BytesLeft = u8ModbusADU[2];</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;          <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;          </div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a401bf89674f94726efca951115704869">ku8MBWriteSingleCoil</a>:</div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a31e5f44d74fa84bf4c9440c82d123fe9">ku8MBWriteMultipleCoils</a>:</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ab68b007cd9473c3ed09f36fb0f6ee3fa">ku8MBWriteSingleRegister</a>:</div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#adf1f58e7806d4c7bc1638255e2639b86">ku8MBWriteMultipleRegisters</a>:</div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;          u8BytesLeft = 3;</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;          <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;          </div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a1de5e699bcada855fb26e336d2cd2cd3">ku8MBMaskWriteRegister</a>:</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;          u8BytesLeft = 5;</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;          <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;      }</div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;    }</div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;    <span class="keywordflow">if</span> (millis() &gt; (u32StartTime + <a class="code" href="class_modbus_master.html#ac9c5d42e3b5cd7ec40ce0c86f6fc1772">ku8MBResponseTimeout</a>))</div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;    {</div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;      u8MBStatus = <a class="code" href="group__constant.html#ga8eb8e14ee2bcf58afc3fbbb4014f297c">ku8MBResponseTimedOut</a>;</div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;    }</div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;  }</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;  </div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;  <span class="comment">// verify response is large enough to inspect further</span></div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;  <span class="keywordflow">if</span> (!u8MBStatus &amp;&amp; u8ModbusADUSize &gt;= 5)</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;  {</div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;    <span class="comment">// calculate CRC</span></div>
-<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;    u16CRC = 0xFFFF;</div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;    <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADUSize - 2); i++)</div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;    {</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;      u16CRC = <a class="code" href="group__util__crc16.html#ga3185a4c5fe188c6bc16ce4f8dc03facf">crc16_update</a>(u16CRC, u8ModbusADU[i]);</div>
-<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;    }</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;    </div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;    <span class="comment">// verify CRC</span></div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;    <span class="keywordflow">if</span> (!u8MBStatus &amp;&amp; (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;      highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;    {</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;      u8MBStatus = <a class="code" href="group__constant.html#gaa73463392a988bbc5260690168b5ca08">ku8MBInvalidCRC</a>;</div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;    }</div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;  }</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;</div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;  <span class="comment">// disassemble ADU into words</span></div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;  <span class="keywordflow">if</span> (!u8MBStatus)</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;  {</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    <span class="comment">// evaluate returned Modbus function code</span></div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;    <span class="keywordflow">switch</span>(u8ModbusADU[1])</div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    {</div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ad7e7aa7bed1b86f24bd577725edc633d">ku8MBReadCoils</a>:</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae08306bd72d5487bccf16c12ade79098">ku8MBReadDiscreteInputs</a>:</div>
-<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;        <span class="comment">// load bytes into word; response bytes are ordered L, H, L, H, ...</span></div>
-<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;        <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADU[2] &gt;&gt; 1); i++)</div>
-<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;        {</div>
-<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;          {</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);</div>
-<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;          }</div>
-<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;          </div>
-<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;          _u8ResponseBufferLength = i;</div>
-<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;        }</div>
-<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;        </div>
-<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;        <span class="comment">// in the event of an odd number of bytes, load last byte into zero-padded word</span></div>
-<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;        <span class="keywordflow">if</span> (u8ModbusADU[2] % 2)</div>
-<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;        {</div>
-<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
-<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;          {</div>
-<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(0, u8ModbusADU[2 * i + 3]);</div>
-<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;          }</div>
-<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;          </div>
-<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;          _u8ResponseBufferLength = i + 1;</div>
-<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;        }</div>
-<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;        </div>
-<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443">ku8MBReadInputRegisters</a>:</div>
-<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae6995c167c152d96b06a918869c03623">ku8MBReadHoldingRegisters</a>:</div>
-<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263">ku8MBReadWriteMultipleRegisters</a>:</div>
-<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;        <span class="comment">// load bytes into word; response bytes are ordered H, L, H, L, ...</span></div>
-<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;        <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADU[2] &gt;&gt; 1); i++)</div>
-<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;        {</div>
-<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
-<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;          {</div>
-<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);</div>
-<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;          }</div>
-<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;          </div>
-<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;          _u8ResponseBufferLength = i;</div>
-<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;        }</div>
-<div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;    }</div>
-<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;  }</div>
-<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;  </div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;  _u8TransmitBufferIndex = 0;</div>
-<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;  u16TransmitBufferLength = 0;</div>
-<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;  _u8ResponseBufferIndex = 0;</div>
-<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;  <span class="keywordflow">return</span> u8MBStatus;</div>
-<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;}</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;  u8ModbusADUSize = 0;</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;  MBSerial-&gt;flush();    <span class="comment">// flush transmit buffer</span></div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;  </div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;  <span class="comment">// loop until we run out of time or bytes, or an error occurs</span></div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;  u32StartTime = millis();</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;  <span class="keywordflow">while</span> (u8BytesLeft &amp;&amp; !u8MBStatus)</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;  {</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    <span class="keywordflow">if</span> (MBSerial-&gt;available())</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    {</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;      digitalWrite(4, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;      u8ModbusADU[u8ModbusADUSize++] = MBSerial-&gt;read();</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;      u8BytesLeft--;</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;      digitalWrite(4, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    }</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    {</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;      digitalWrite(5, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;      <span class="keywordflow">if</span> (_idle)</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;      {</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;        _idle();</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;      }</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;<span class="preprocessor">#if __MODBUSMASTER_DEBUG__</span></div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;      digitalWrite(5, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    }</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    </div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    <span class="comment">// evaluate slave ID, function code once enough bytes have been read</span></div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;    <span class="keywordflow">if</span> (u8ModbusADUSize == 5)</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    {</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;      <span class="comment">// verify response is for correct Modbus slave</span></div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;      <span class="keywordflow">if</span> (u8ModbusADU[0] != <a class="code" href="class_modbus_master.html#a8bc19d22b864e85ad67b4b633fa56597">_u8MBSlave</a>)</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;      {</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;        u8MBStatus = <a class="code" href="group__constant.html#ga19521b4671bdc1ded03af72e2f3b958e">ku8MBInvalidSlaveID</a>;</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;      }</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;      </div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;      <span class="comment">// verify response is for correct Modbus function code (mask exception bit 7)</span></div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;      <span class="keywordflow">if</span> ((u8ModbusADU[1] &amp; 0x7F) != u8MBFunction)</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;      {</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;        u8MBStatus = <a class="code" href="group__constant.html#ga31e9072531cf487c137b68b5e1e68926">ku8MBInvalidFunction</a>;</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;      }</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;      </div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;      <span class="comment">// check whether Modbus exception occurred; return Modbus Exception Code</span></div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;      <span class="keywordflow">if</span> (bitRead(u8ModbusADU[1], 7))</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;      {</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;        u8MBStatus = u8ModbusADU[2];</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;      }</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;      </div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;      <span class="comment">// evaluate returned Modbus function code</span></div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;      <span class="keywordflow">switch</span>(u8ModbusADU[1])</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;      {</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ad7e7aa7bed1b86f24bd577725edc633d">ku8MBReadCoils</a>:</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae08306bd72d5487bccf16c12ade79098">ku8MBReadDiscreteInputs</a>:</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443">ku8MBReadInputRegisters</a>:</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae6995c167c152d96b06a918869c03623">ku8MBReadHoldingRegisters</a>:</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263">ku8MBReadWriteMultipleRegisters</a>:</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;          u8BytesLeft = u8ModbusADU[2];</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;          </div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a401bf89674f94726efca951115704869">ku8MBWriteSingleCoil</a>:</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a31e5f44d74fa84bf4c9440c82d123fe9">ku8MBWriteMultipleCoils</a>:</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ab68b007cd9473c3ed09f36fb0f6ee3fa">ku8MBWriteSingleRegister</a>:</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#adf1f58e7806d4c7bc1638255e2639b86">ku8MBWriteMultipleRegisters</a>:</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;          u8BytesLeft = 3;</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;          </div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;        <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#a1de5e699bcada855fb26e336d2cd2cd3">ku8MBMaskWriteRegister</a>:</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;          u8BytesLeft = 5;</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;          <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;      }</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;    }</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;    <span class="keywordflow">if</span> ((millis() - u32StartTime) &gt; <a class="code" href="class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2">ku16MBResponseTimeout</a>)</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;    {</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;      u8MBStatus = <a class="code" href="group__constant.html#ga8eb8e14ee2bcf58afc3fbbb4014f297c">ku8MBResponseTimedOut</a>;</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;    }</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;  }</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;  </div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;  <span class="comment">// verify response is large enough to inspect further</span></div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;  <span class="keywordflow">if</span> (!u8MBStatus &amp;&amp; u8ModbusADUSize &gt;= 5)</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;  {</div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;    <span class="comment">// calculate CRC</span></div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;    u16CRC = 0xFFFF;</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;    <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADUSize - 2); i++)</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;    {</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;      u16CRC = <a class="code" href="group__util__crc16.html#ga3185a4c5fe188c6bc16ce4f8dc03facf">crc16_update</a>(u16CRC, u8ModbusADU[i]);</div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;    }</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;    </div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;    <span class="comment">// verify CRC</span></div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    <span class="keywordflow">if</span> (!u8MBStatus &amp;&amp; (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;      highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;    {</div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;      u8MBStatus = <a class="code" href="group__constant.html#gaa73463392a988bbc5260690168b5ca08">ku8MBInvalidCRC</a>;</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    }</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;  }</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;  <span class="comment">// disassemble ADU into words</span></div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;  <span class="keywordflow">if</span> (!u8MBStatus)</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;  {</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    <span class="comment">// evaluate returned Modbus function code</span></div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;    <span class="keywordflow">switch</span>(u8ModbusADU[1])</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;    {</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ad7e7aa7bed1b86f24bd577725edc633d">ku8MBReadCoils</a>:</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae08306bd72d5487bccf16c12ade79098">ku8MBReadDiscreteInputs</a>:</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;        <span class="comment">// load bytes into word; response bytes are ordered L, H, L, H, ...</span></div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;        <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADU[2] &gt;&gt; 1); i++)</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;        {</div>
+<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;          {</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;          }</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;          </div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;          _u8ResponseBufferLength = i;</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;        }</div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;        </div>
+<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;        <span class="comment">// in the event of an odd number of bytes, load last byte into zero-padded word</span></div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;        <span class="keywordflow">if</span> (u8ModbusADU[2] % 2)</div>
+<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;        {</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
+<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;          {</div>
+<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(0, u8ModbusADU[2 * i + 3]);</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;          }</div>
+<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;          </div>
+<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;          _u8ResponseBufferLength = i + 1;</div>
+<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;        }</div>
+<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;        </div>
+<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443">ku8MBReadInputRegisters</a>:</div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#ae6995c167c152d96b06a918869c03623">ku8MBReadHoldingRegisters</a>:</div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;      <span class="keywordflow">case</span> <a class="code" href="class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263">ku8MBReadWriteMultipleRegisters</a>:</div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;        <span class="comment">// load bytes into word; response bytes are ordered H, L, H, L, ...</span></div>
+<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;        <span class="keywordflow">for</span> (i = 0; i &lt; (u8ModbusADU[2] &gt;&gt; 1); i++)</div>
+<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;        {</div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;          <span class="keywordflow">if</span> (i &lt; <a class="code" href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ku8MaxBufferSize</a>)</div>
+<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;          {</div>
+<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;            <a class="code" href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">_u16ResponseBuffer</a>[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);</div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;          }</div>
+<div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;          </div>
+<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;          _u8ResponseBufferLength = i;</div>
+<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;        }</div>
+<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;    }</div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;  }</div>
+<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;  </div>
+<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;  _u8TransmitBufferIndex = 0;</div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;  u16TransmitBufferLength = 0;</div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;  _u8ResponseBufferIndex = 0;</div>
+<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;  <span class="keywordflow">return</span> u8MBStatus;</div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;}</div>
 <div class="ttc" id="class_modbus_master_html_a00edff3fbd53d94dcc1b6be593c61289"><div class="ttname"><a href="class_modbus_master.html#a00edff3fbd53d94dcc1b6be593c61289">ModbusMaster::_u16WriteAddress</a></div><div class="ttdeci">uint16_t _u16WriteAddress</div><div class="ttdoc">slave register to which to write </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:234</div></div>
 <div class="ttc" id="group__constant_html_ga31e9072531cf487c137b68b5e1e68926"><div class="ttname"><a href="group__constant.html#ga31e9072531cf487c137b68b5e1e68926">ModbusMaster::ku8MBInvalidFunction</a></div><div class="ttdeci">static const uint8_t ku8MBInvalidFunction</div><div class="ttdoc">ModbusMaster invalid response function exception. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:176</div></div>
 <div class="ttc" id="class_modbus_master_html_ab68b007cd9473c3ed09f36fb0f6ee3fa"><div class="ttname"><a href="class_modbus_master.html#ab68b007cd9473c3ed09f36fb0f6ee3fa">ModbusMaster::ku8MBWriteSingleRegister</a></div><div class="ttdeci">static const uint8_t ku8MBWriteSingleRegister</div><div class="ttdoc">Modbus function 0x06 Write Single Register. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:253</div></div>
 <div class="ttc" id="class_modbus_master_html_adf1f58e7806d4c7bc1638255e2639b86"><div class="ttname"><a href="class_modbus_master.html#adf1f58e7806d4c7bc1638255e2639b86">ModbusMaster::ku8MBWriteMultipleRegisters</a></div><div class="ttdeci">static const uint8_t ku8MBWriteMultipleRegisters</div><div class="ttdoc">Modbus function 0x10 Write Multiple Registers. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:254</div></div>
 <div class="ttc" id="group__constant_html_ga8eb8e14ee2bcf58afc3fbbb4014f297c"><div class="ttname"><a href="group__constant.html#ga8eb8e14ee2bcf58afc3fbbb4014f297c">ModbusMaster::ku8MBResponseTimedOut</a></div><div class="ttdeci">static const uint8_t ku8MBResponseTimedOut</div><div class="ttdoc">ModbusMaster response timed out exception. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:186</div></div>
 <div class="ttc" id="class_modbus_master_html_ae6995c167c152d96b06a918869c03623"><div class="ttname"><a href="class_modbus_master.html#ae6995c167c152d96b06a918869c03623">ModbusMaster::ku8MBReadHoldingRegisters</a></div><div class="ttdeci">static const uint8_t ku8MBReadHoldingRegisters</div><div class="ttdoc">Modbus function 0x03 Read Holding Registers. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:251</div></div>
-<div class="ttc" id="class_modbus_master_html_ac9c5d42e3b5cd7ec40ce0c86f6fc1772"><div class="ttname"><a href="class_modbus_master.html#ac9c5d42e3b5cd7ec40ce0c86f6fc1772">ModbusMaster::ku8MBResponseTimeout</a></div><div class="ttdeci">static const uint8_t ku8MBResponseTimeout</div><div class="ttdoc">Modbus timeout [milliseconds]. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:259</div></div>
 <div class="ttc" id="class_modbus_master_html_a401bf89674f94726efca951115704869"><div class="ttname"><a href="class_modbus_master.html#a401bf89674f94726efca951115704869">ModbusMaster::ku8MBWriteSingleCoil</a></div><div class="ttdeci">static const uint8_t ku8MBWriteSingleCoil</div><div class="ttdoc">Modbus function 0x05 Write Single Coil. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:247</div></div>
 <div class="ttc" id="group__constant_html_ga19521b4671bdc1ded03af72e2f3b958e"><div class="ttname"><a href="group__constant.html#ga19521b4671bdc1ded03af72e2f3b958e">ModbusMaster::ku8MBInvalidSlaveID</a></div><div class="ttdeci">static const uint8_t ku8MBInvalidSlaveID</div><div class="ttdoc">ModbusMaster invalid response slave ID exception. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:167</div></div>
 <div class="ttc" id="class_modbus_master_html_a043a88f0b184accd9176770dee55a6b3"><div class="ttname"><a href="class_modbus_master.html#a043a88f0b184accd9176770dee55a6b3">ModbusMaster::_u16ReadQty</a></div><div class="ttdeci">uint16_t _u16ReadQty</div><div class="ttdoc">quantity of words to read </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:232</div></div>
 <div class="ttc" id="class_modbus_master_html_ab9a1a34c8e3bbd84529230e559694c29"><div class="ttname"><a href="class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29">ModbusMaster::ku8MaxBufferSize</a></div><div class="ttdeci">static const uint8_t ku8MaxBufferSize</div><div class="ttdoc">size of response/transmit buffers </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:230</div></div>
 <div class="ttc" id="class_modbus_master_html_aeaa94736b198f6a05cf74e0466afb443"><div class="ttname"><a href="class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443">ModbusMaster::ku8MBReadInputRegisters</a></div><div class="ttdeci">static const uint8_t ku8MBReadInputRegisters</div><div class="ttdoc">Modbus function 0x04 Read Input Registers. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:252</div></div>
 <div class="ttc" id="class_modbus_master_html_a347a26fa1b91d7d0210b021e52a95268"><div class="ttname"><a href="class_modbus_master.html#a347a26fa1b91d7d0210b021e52a95268">ModbusMaster::_u16ResponseBuffer</a></div><div class="ttdeci">uint16_t _u16ResponseBuffer[ku8MaxBufferSize]</div><div class="ttdoc">buffer to store Modbus slave response; read via GetResponseBuffer() </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:233</div></div>
+<div class="ttc" id="class_modbus_master_html_a31d5f182084de9eaa76ff24f7ca736c2"><div class="ttname"><a href="class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2">ModbusMaster::ku16MBResponseTimeout</a></div><div class="ttdeci">static const uint16_t ku16MBResponseTimeout</div><div class="ttdoc">Modbus timeout [milliseconds]. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:259</div></div>
 <div class="ttc" id="class_modbus_master_html_ad3191c5da05cf72e117814ba0472b420"><div class="ttname"><a href="class_modbus_master.html#ad3191c5da05cf72e117814ba0472b420">ModbusMaster::_u16WriteQty</a></div><div class="ttdeci">uint16_t _u16WriteQty</div><div class="ttdoc">quantity of words to write </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:235</div></div>
 <div class="ttc" id="class_modbus_master_html_adfb48ef6321f738cc4b55c4b6e4a6335"><div class="ttname"><a href="class_modbus_master.html#adfb48ef6321f738cc4b55c4b6e4a6335">ModbusMaster::_u16ReadAddress</a></div><div class="ttdeci">uint16_t _u16ReadAddress</div><div class="ttdoc">slave register from which to read </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:231</div></div>
 <div class="ttc" id="class_modbus_master_html_a31e5f44d74fa84bf4c9440c82d123fe9"><div class="ttname"><a href="class_modbus_master.html#a31e5f44d74fa84bf4c9440c82d123fe9">ModbusMaster::ku8MBWriteMultipleCoils</a></div><div class="ttdeci">static const uint8_t ku8MBWriteMultipleCoils</div><div class="ttdoc">Modbus function 0x0F Write Multiple Coils. </div><div class="ttdef"><b>Definition:</b> ModbusMaster.h:248</div></div>

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['ku16mbresponsetimeout',['ku16MBResponseTimeout',['../class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2',1,'ModbusMaster']]],
   ['ku8maxbuffersize',['ku8MaxBufferSize',['../class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29',1,'ModbusMaster']]],
   ['ku8mbillegaldataaddress',['ku8MBIllegalDataAddress',['../group__constant.html#ga5d90968b8bbc157f9937c2d9a866102d',1,'ModbusMaster']]],
   ['ku8mbillegaldatavalue',['ku8MBIllegalDataValue',['../group__constant.html#gaa49d578ceaa82518573b3f7e2d925322',1,'ModbusMaster']]],
@@ -14,7 +15,6 @@ var searchData=
   ['ku8mbreadinputregisters',['ku8MBReadInputRegisters',['../class_modbus_master.html#aeaa94736b198f6a05cf74e0466afb443',1,'ModbusMaster']]],
   ['ku8mbreadwritemultipleregisters',['ku8MBReadWriteMultipleRegisters',['../class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263',1,'ModbusMaster']]],
   ['ku8mbresponsetimedout',['ku8MBResponseTimedOut',['../group__constant.html#ga8eb8e14ee2bcf58afc3fbbb4014f297c',1,'ModbusMaster']]],
-  ['ku8mbresponsetimeout',['ku8MBResponseTimeout',['../class_modbus_master.html#ac9c5d42e3b5cd7ec40ce0c86f6fc1772',1,'ModbusMaster']]],
   ['ku8mbslavedevicefailure',['ku8MBSlaveDeviceFailure',['../group__constant.html#ga3b26f812363d765a334d72635da74fe5',1,'ModbusMaster']]],
   ['ku8mbsuccess',['ku8MBSuccess',['../group__constant.html#ga81dd9e8d2936e369359777d67769a657',1,'ModbusMaster']]],
   ['ku8mbwritemultiplecoils',['ku8MBWriteMultipleCoils',['../class_modbus_master.html#a31e5f44d74fa84bf4c9440c82d123fe9',1,'ModbusMaster']]],
