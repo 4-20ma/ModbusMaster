@@ -1,3 +1,10 @@
+## [v0.10.3 (2015-05-22)](/4-20ma/ModbusMaster/tree/v0.10.3)
+- Adjust doxygen comments to be consistent
+- Replace C macros w/inline functions
+- Update library.properties to conform to others
+- Adjust README links to use absolute URLs
+
+---
 ## [v0.10.2 (2015-05-21)](/4-20ma/ModbusMaster/tree/v0.10.2)
 - Update documentation after resolving doc build err
 - Fix documentation build error
