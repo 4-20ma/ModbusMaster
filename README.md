@@ -1,5 +1,10 @@
 ModbusMaster
 ============
+[![GitHub tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg)][GitHub tag]
+[![GitHub license](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg)][GitHub license]
+
+[GitHub tag]:     https://github.com/4-20ma/ModbusMaster
+[GitHub license]: COPYING
 
 Overview
 --------
