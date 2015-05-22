@@ -12,10 +12,13 @@ Rake::VersionTask.new do |task|
 end
 
 # adjust as appropriate
+CWD             = File.expand_path(File.dirname(__FILE__))
+DOXYFILE        = 'Doxyfile'
 GITHUB_USERNAME = '4-20ma'
 GITHUB_REPO     = 'ModbusMaster'
 HEADER_FILE     = "#{GITHUB_REPO}.h"
-HISTORY_FILE    = 'HISTORY.markdown'
+HISTORY_FILE    = 'HISTORY.md'
+PROPERTIES_FILE = 'library.properties'
 VERSION_FILE    = Version.version_file('').basename.to_s
 
 
@@ -34,11 +37,11 @@ task :info do
     $ rake version:bump:major     # or
     edit 'VERSION' file directly
     
-  - Prepare release date, 'HISTORY.markdown' file, documentation:
+  - Prepare release date, 'HISTORY.md' file, documentation:
   
     $ rake prepare
     
-  - Review changes to 'HISTORY.markdown' file
+  - Review changes to 'HISTORY.md' file
     This file is assembled using git commit messages; review for completeness.
   
   - Review html documentation files
@@ -58,15 +61,19 @@ desc 'Prepare HISTORY file for release'
 task :prepare => 'prepare:default'
 
 namespace :prepare do
-  task :default => [:release_date, :history, :documentation]
+  task :default => [
+    :release_date,
+    :library_properties,
+    :history,
+    :documentation
+  ]
   
   desc 'Prepare documentation'
   task :documentation do
     version = Version.current.to_s
     
     # update parameters in Doxyfile
-    cwd = File.expand_path(File.dirname(__FILE__))
-    file = File.join(cwd, 'doc', 'Doxyfile')
+    file = File.join(CWD, 'doc', DOXYFILE)
     
     contents = IO.read(file)
     contents.sub!(/(^PROJECT_NUMBER\s*=)(.*)$/) do |match|
@@ -75,11 +82,11 @@ namespace :prepare do
     IO.write(file, contents)
     
     # chdir to doc/ and call doxygen to update documentation
-    Dir.chdir(to = File.join(cwd, 'doc'))
-    system('doxygen', 'Doxyfile')
+    Dir.chdir(to = File.join(CWD, 'doc'))
+    system('doxygen', DOXYFILE)
     
     # chdir to doc/latex and call doxygen to update documentation
-    Dir.chdir(from = File.join(cwd, 'doc', 'latex'))
+    Dir.chdir(from = File.join(CWD, 'doc', 'latex'))
     system('make')
     
     # move/rename file to 'doc/GITHUB_REPO reference-x.y.pdf'
@@ -89,8 +96,7 @@ namespace :prepare do
   
   desc 'Prepare release history'
   task :history, :tag do |t, args|
-    cwd = File.expand_path(File.dirname(__FILE__))
-    g = Git.open(cwd)
+    g = Git.open(CWD)
     
     current_tag = args[:tag] || Version.current.to_s
     prior_tag = g.tags.last
@@ -104,17 +110,29 @@ namespace :prepare do
     end.join("\n")
     history << "\n\n---\n"
     
-    file = File.join(cwd, HISTORY_FILE)
+    file = File.join(CWD, HISTORY_FILE)
     puts "Updating file #{file}:"
     puts history
     contents = IO.read(file)
     IO.write(file, history << contents)
   end # task :history
   
+  desc 'Update version in library properties file'
+  task :library_properties do
+    version = Version.current.to_s
+
+    file = File.join(CWD, PROPERTIES_FILE)
+
+    contents = IO.read(file)
+    contents.sub!(/(version=\s*)(.*)$/) do |match|
+      "#{$1}#{version}"
+    end # contents.sub!(...)
+    IO.write(file, contents)
+  end # task :library_properties
+
   desc 'Update release date in header file'
   task :release_date do
-    cwd = File.expand_path(File.dirname(__FILE__))
-    file = File.join(cwd, HEADER_FILE)
+    file = File.join(CWD, HEADER_FILE)
     
     contents = IO.read(file)
     contents.sub!(/(\\date\s*)(.*)$/) do |match|
@@ -161,7 +179,8 @@ namespace :release do
   desc 'Commit source changes related to version bump'
   task :source do
     version = Version.current.to_s
-    `git add #{HEADER_FILE} #{HISTORY_FILE} #{VERSION_FILE}`
+    `git add doc/#{DOXYFILE} "doc/#{GITHUB_REPO} reference-#{version}.pdf" \
+      #{HEADER_FILE} #{HISTORY_FILE} #{PROPERTIES_FILE} #{VERSION_FILE}`
     `git commit -m 'Version bump to v#{version}'`
     `git tag -a -f -m 'Version v#{version}' v#{version}`
     `git push origin master`
