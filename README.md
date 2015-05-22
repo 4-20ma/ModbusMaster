@@ -55,7 +55,7 @@ Installation
 
 Support
 -------
-Please report any bugs on the [Issue Tracker](/4-20ma/ModbusMaster/issues).
+Please report any bugs on the [Issue Tracker](https://github.com/4-20ma/ModbusMaster/issues).
 
 
 Questions/Feedback
@@ -65,7 +65,7 @@ I can be contacted at 4-20ma at wvfans dot net.
 
 Example
 -------
-The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](/4-20ma/ModbusMaster/tree/master/examples/) folder.
+The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](https://github.com/4-20ma/ModbusMaster/tree/master/examples) folder.
 
 ```c++
 /*
