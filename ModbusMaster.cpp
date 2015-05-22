@@ -763,7 +763,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   }
   
   u8ModbusADUSize = 0;
-  MBSerial->flush();
+  MBSerial->flush();    // flush transmit buffer
   
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();
