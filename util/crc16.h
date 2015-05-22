@@ -1,3 +1,22 @@
+/**
+@file
+CRC Computations
+
+@defgroup util_crc16 "util/crc16.h": CRC Computations
+@code#include "util/crc16.h"@endcode
+
+This header file provides functions for calculating
+cyclic redundancy checks (CRC) using common polynomials.
+Modified by Doc Walker to be processor-independent (removed inline
+assembler to allow it to compile on SAM3X8E processors).
+
+@par References:
+Jack Crenshaw's "Implementing CRCs" article in the January 1992 issue of @e
+Embedded @e Systems @e Programming. This may be difficult to find, but it
+explains CRC's in very clear and concise terms. Well worth the effort to
+obtain a copy.
+
+*/
 /* Copyright (c) 2002, 2003, 2004  Marek Michalkiewicz
    Copyright (c) 2005, 2007 Joerg Wunsch
    Copyright (c) 2013 Dave Hylands
@@ -32,39 +51,23 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE. */
 
+
 #ifndef _UTIL_CRC16_H_
 #define _UTIL_CRC16_H_
 
-/** \file */
-/** \defgroup util_crc <util/crc16.h>: CRC Computations
-    \code#include <util/crc16.h>\endcode
 
-    This header file provides functions for calculating
-    cyclic redundancy checks (CRC) using common polynomials.
-    Modified by Doc Walker to be processor-independent (removed inline
-    assembler to allow it to compile on SAM3X8E processors).
-
-    \par References:
-
-    \par
-
-    Jack Crenshaw's "Implementing CRCs" article in the January 1992 isue of \e
-    Embedded \e Systems \e Programming. This may be difficult to find, but it
-    explains CRC's in very clear and concise terms. Well worth the effort to
-    obtain a copy.
-
-*/
-
-/** \ingroup util_crc
+/** @ingroup util_crc16
     Processor-independent CRC-16 calculation.
 
-    Polynomial: x^16 + x^15 + x^2 + 1 (0xa001)<br>
-    Initial value: 0xffff
+    Polynomial: x^16 + x^15 + x^2 + 1 (0xA001)<br>
+    Initial value: 0xFFFF
 
     This CRC is normally used in disk-drive controllers.
 
-    \endcode */
-
+    @param uint16_t crc (0x0000..0xFFFF)
+    @param uint8_t a (0x00..0xFF)
+    @return calculated CRC (0x0000..0xFFFF)
+*/
 static uint16_t crc16_update(uint16_t crc, uint8_t a)
 {
   int i;
@@ -80,5 +83,6 @@ static uint16_t crc16_update(uint16_t crc, uint8_t a)
 
   return crc;
 }
+
 
 #endif /* _UTIL_CRC16_H_ */
