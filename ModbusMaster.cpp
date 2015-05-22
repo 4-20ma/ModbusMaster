@@ -34,11 +34,11 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 
 /* _____GLOBAL VARIABLES_____________________________________________________ */
 #ifdef __AVR__
-  HardwareSerial *MBSerial = &Serial; ///< Pointer to Serial class object
+  HardwareSerial* MBSerial = &Serial; ///< Pointer to Serial class object
 #endif
 
 #ifdef __arm__
-  UARTClass *MBSerial = &Serial; ///< Pointer to Serial class object
+  UARTClass* MBSerial = &Serial; ///< Pointer to Serial class object
 #endif
 
 
