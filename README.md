@@ -1,9 +1,3 @@
-THIS REPO IS NO LONGER MAINTAINED
-=================================
-
-I haven't used this for a while. If you would like to take over ownership of this repo, please let me know.
-
-
 ##Overview##
 This is an Arduino class library for communicating with Modbus slaves over RS232/485 (via RTU protocol). **Updated to support Arduino 1.0.**
 
