@@ -166,7 +166,7 @@ uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
 {
   uint8_t read;
   // clamp to buffer length
-  if(quantity > ku8MaxBufferSize)
+  if (quantity > ku8MaxBufferSize)
   {
     quantity = ku8MaxBufferSize;
   }
