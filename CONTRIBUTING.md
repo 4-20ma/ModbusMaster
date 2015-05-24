@@ -15,10 +15,9 @@ Contributing
 
 - Test your change
 
-- Make commits of logical/atomic units
-
-- Check for unnecessary whitespace with `git diff --check` before committing
+- Make commits of logical units
+    - Check for unnecessary whitespace with `git diff --check` before committing
+    - Each commit should represent one atomic change and should stand on its own
+    - Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
 
 - Push to your fork and [submit a pull request](https://github.com/4-20ma/ModbusMaster/compare/)
-
-- Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
