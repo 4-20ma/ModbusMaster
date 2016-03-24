@@ -34,11 +34,13 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 
 /* _____GLOBAL VARIABLES_____________________________________________________ */
 #if defined(ARDUINO_ARCH_AVR)
-  #if defined(USBCON)
-     HardwareSerial* MBSerial = &Serial1;///< Pointer to Serial class object
-  #else
-     HardwareSerial* MBSerial = &Serial;///< Pointer to Serial class object
-  #endif
+//  HardwareSerial* MBSerial = &Serial; ///< Pointer to Serial class object
+#if defined(USBCON)
+   HardwareSerial* MBSerial = &Serial1;
+#else
+   HardwareSerial* MBSerial = &Serial;
+#endif
+
 #elif defined(ARDUINO_ARCH_SAM)
   UARTClass* MBSerial = &Serial; ///< Pointer to Serial class object
 #else
@@ -146,11 +148,14 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
       
     case 0:
     default:
+      //MBSerial = &Serial;
+
       #if defined(USBCON)
          MBSerial = &Serial1;
       #else
          MBSerial = &Serial;
       #endif
+
       break;
   }
   
@@ -291,6 +296,29 @@ uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
   {
     return 0xFFFF;
   }
+}
+
+
+/**
+Retrieve floats from response buffer.
+
+@param u8Index index of response buffer array (0x00..0x3F)
+@return float in position (u8Index to u8Index +1) of response buffer
+@ingroup buffer
+*/
+float ModbusMaster::getResponseBufferFloat(uint8_t u8Index)
+{
+  // Create union of shared memory space
+  union {
+    float float_variable;
+    uint16_t temp_array[2];
+  } u;
+  // Overite bytes of union with float bytes
+  u.temp_array[1] = getResponseBuffer(u8Index + 1);
+  u.temp_array[0] = getResponseBuffer(u8Index);
+ 
+ // Return float
+  return u.float_variable;
 }
 
 
