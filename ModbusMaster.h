@@ -195,6 +195,7 @@ class ModbusMaster
     static const uint8_t ku8MBInvalidCRC                 = 0xE3;
     
     uint16_t getResponseBuffer(uint8_t);
+    float getResponseBufferFloat(uint8_t);
     void     clearResponseBuffer();
     uint8_t  setTransmitBuffer(uint8_t, uint16_t);
     void     clearTransmitBuffer();
