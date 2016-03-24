@@ -23,6 +23,7 @@ getResponseBuffer	KEYWORD2
 clearResponseBuffer	KEYWORD2
 setTransmitBuffer	KEYWORD2
 clearTransmitBuffer	KEYWORD2
+getResponseBufferFloat	KEYWORD2
 
 readCoils	KEYWORD2
 readDiscreteInputs	KEYWORD2
