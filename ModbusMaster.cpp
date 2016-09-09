@@ -148,8 +148,8 @@ void ModbusMaster::begin(uint16_t u16BaudRate)
   
   MBSerial->begin(u16BaudRate);
 #if __MODBUSMASTER_DEBUG__
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
+  pinMode(__MODBUSMASTER_DEBUG_PIN_A__, OUTPUT);
+  pinMode__MODBUSMASTER_DEBUG_PIN_B__, OUTPUT);
 #endif
 }
 
@@ -772,25 +772,25 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     if (MBSerial->available())
     {
 #if __MODBUSMASTER_DEBUG__
-      digitalWrite(4, true);
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
       u8ModbusADU[u8ModbusADUSize++] = MBSerial->read();
       u8BytesLeft--;
 #if __MODBUSMASTER_DEBUG__
-      digitalWrite(4, false);
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
 #endif
     }
     else
     {
 #if __MODBUSMASTER_DEBUG__
-      digitalWrite(5, true);
+      digitalWrite__MODBUSMASTER_DEBUG_PIN_B__, true);
 #endif
       if (_idle)
       {
         _idle();
       }
 #if __MODBUSMASTER_DEBUG__
-      digitalWrite(5, false);
+      digitalWrite__MODBUSMASTER_DEBUG_PIN_B__, false);
 #endif
     }
     
