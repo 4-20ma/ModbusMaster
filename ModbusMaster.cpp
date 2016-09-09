@@ -54,6 +54,9 @@ ModbusMaster::ModbusMaster(void)
 {
   _u8SerialPort = 0;
   _u8MBSlave = 1;
+  _idle = 0;
+  _preTransmission = 0;
+  _postTransmission = 0;
 }
 
 
@@ -70,6 +73,9 @@ ModbusMaster::ModbusMaster(uint8_t u8MBSlave)
 {
   _u8SerialPort = 0;
   _u8MBSlave = u8MBSlave;
+  _idle = 0;
+  _preTransmission = 0;
+  _postTransmission = 0;
 }
 
 
@@ -87,6 +93,9 @@ ModbusMaster::ModbusMaster(uint8_t u8SerialPort, uint8_t u8MBSlave)
 {
   _u8SerialPort = (u8SerialPort > 3) ? 0 : u8SerialPort;
   _u8MBSlave = u8MBSlave;
+  _idle = 0;
+  _preTransmission = 0;
+  _postTransmission = 0;
 }
 
 
@@ -262,6 +271,37 @@ serial ports, etc. is permitted within callback function.
 void ModbusMaster::idle(void (*idle)())
 {
   _idle = idle;
+}
+
+/**
+Set pre-transmission callback function.
+
+This function gets called just before a modbus message is sent over serial.
+Typical usage of this callback is to enable an RS485 transcieiver's
+Driver Enable pin, and optionally disable its Receiver Enable pin.
+
+@see ModbusMaster::postTransmission()
+*/
+void ModbusMaster::preTransmission(void (*preTransmission)())
+{
+  _preTransmission = preTransmission;
+}
+
+/**
+Set post-transmission callback function.
+
+This function gets called after a modbus message has finished sending
+(i.e. after all data has been physically transmitted onto the serial
+bus).
+
+Typical usage of this callback is to enable an RS485 transcieiver's
+Received Enable pin, and disable its Driver Enable pin.
+
+@see ModbusMaster::postTransmission()
+*/
+void ModbusMaster::postTransmission(void (*postTransmission)())
+{
+  _postTransmission = postTransmission;
 }
 
 
@@ -753,6 +793,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   while (MBSerial->read() != -1);
 
   // transmit request
+  if (_preTransmission) _preTransmission();
   for (i = 0; i < u8ModbusADUSize; i++)
   {
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -764,6 +805,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   
   u8ModbusADUSize = 0;
   MBSerial->flush();    // flush transmit buffer
+  if (_postTransmission) _postTransmission();
   
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();

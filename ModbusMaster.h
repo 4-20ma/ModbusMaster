@@ -45,7 +45,7 @@ Set to 1 to enable debugging features within class:
   - pin 5 cycles for each millisecond timeout during the Modbus response
 */
 #define __MODBUSMASTER_DEBUG__ (1)
-
+ 
 
 /* _____STANDARD INCLUDES____________________________________________________ */
 // include types & constants of Wiring core API
@@ -80,8 +80,10 @@ class ModbusMaster
     
     void begin();
     void begin(uint16_t);
-    void idle(void (*)());
-    
+    void idle(void (*)()); 
+    void preTransmission(void (*)());
+    void postTransmission(void (*)());
+   
     // Modbus exception codes
     /**
     Modbus protocol illegal function exception.
@@ -263,6 +265,10 @@ class ModbusMaster
     
     // idle callback function; gets called during idle time between TX and RX
     void (*_idle)();
+    // preTransmission callback function; gets called before writing a modbus message
+    void (*_preTransmission)();
+    // postTransmission callback function; gets after a modbus message has been sent
+    void (*_postTransmission)();
 };
 #endif
 
