@@ -6,7 +6,7 @@ Title - ensure the issue title is clear & concise
 -->
 
 <!----------------------------------------------------------------------------
-Provide the following information for all issues. Replace placeholder text, including [brackets].
+Provide the following information for all issues. Replace [brackets] and placeholder text with your responses.
 (QUESTIONS, BUG REPORTS, FEATURE REQUESTS)
 -->
 ### ModbusMaster version
@@ -23,7 +23,7 @@ Provide the following information for all issues. Replace placeholder text, incl
 
 ---
 <!----------------------------------------------------------------------------
-Provide the following for QUESTIONS & BUG REPORTS. Replace placeholder text, including [brackets].
+Provide the following for QUESTIONS & BUG REPORTS. Replace [brackets] and placeholder text with your responses.
 -->
 ### Scenario:
 [What you are trying to achieve and you can't?]
@@ -39,7 +39,7 @@ Provide the following for QUESTIONS & BUG REPORTS. Replace placeholder text, inc
 
 ---
 <!----------------------------------------------------------------------------
-Provide the following for FEATURE REQUESTS. Replace placeholder text, including [brackets].
+Provide the following for FEATURE REQUESTS. Replace [brackets] and placeholder text with your responses.
 Refer to [What's in a Story?](https://dannorth.net/whats-in-a-story/)
 -->
 ### Feature Request
