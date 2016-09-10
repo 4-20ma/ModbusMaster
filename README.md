@@ -88,22 +88,24 @@ The library contains a few sketches that demonstrate use of the ModbusMaster lib
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
 
   Written by Doc Walker (Rx)
-  Copyright © 2009-2013 Doc Walker <4-20ma at wvfans dot net>
+  Copyright © 2009-2015 Doc Walker <4-20ma at wvfans dot net>
 
 */
 
 #include <ModbusMaster.h>
 
 
-// instantiate ModbusMaster object as slave ID 2
-// defaults to serial port 0 since no port was specified
-ModbusMaster node(2);
+// instantiate ModbusMaster object
+ModbusMaster node;
 
 
 void setup()
 {
-  // initialize Modbus communication baud rate
-  node.begin(19200);
+  // use Serial (port 0); initialize Modbus communication baud rate
+  Serial.begin(19200);
+
+  // communicate with Modbus slave ID 2 over Serial (port 0)
+  node.begin(2, Serial);
 }
 
 

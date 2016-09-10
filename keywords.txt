@@ -7,7 +7,6 @@
 #######################################
 
 ModbusMaster	KEYWORD1
-MBSerial	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
