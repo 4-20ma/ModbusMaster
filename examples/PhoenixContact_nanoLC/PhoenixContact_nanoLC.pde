@@ -19,7 +19,7 @@
   along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
   
   Written by Doc Walker (Rx)
-  Copyright © 2009-2013 Doc Walker <4-20ma at wvfans dot net>
+  Copyright © 2009-2015 Doc Walker <4-20ma at wvfans dot net>
   
 */
 
@@ -46,14 +46,17 @@
 #define NANO_AI(n)   (0x0000 + 2 * n) ///< returns nanoLC analog input address
 
 
-// instantiate ModbusMaster object, serial port 0, Modbus slave ID 1
-ModbusMaster nanoLC(0, 1);
+// instantiate ModbusMaster object
+ModbusMaster nanoLC;
 
 
 void setup()
 {
-  // initialize Modbus communication baud rate
-  nanoLC.begin(19200);
+  // use Serial (port 0); initialize Modbus communication baud rate
+  Serial.begin(19200);
+
+  // communicate with Modbus slave ID 1 over Serial (port 0)
+  nanoLC.begin(1, Serial);
 }
 
 

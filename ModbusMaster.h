@@ -75,15 +75,12 @@ class ModbusMaster
 {
   public:
     ModbusMaster();
-    ModbusMaster(uint8_t);
-    ModbusMaster(uint8_t, uint8_t);
-    
-    void begin();
-    void begin(uint16_t);
-    void idle(void (*)()); 
+   
+    void begin(uint8_t, Stream &serial);
+    void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
-   
+
     // Modbus exception codes
     /**
     Modbus protocol illegal function exception.
@@ -226,9 +223,8 @@ class ModbusMaster
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t);
     
   private:
-    uint8_t  _u8SerialPort;                                      ///< serial port (0..3) initialized in constructor
-    uint8_t  _u8MBSlave;                                         ///< Modbus slave (1..255) initialized in constructor
-    uint16_t _u16BaudRate;                                       ///< baud rate (300..115200) initialized in begin()
+    Stream* _serial;                                             ///< reference to serial port object
+    uint8_t  _u8MBSlave;                                         ///< Modbus slave (1..255) initialized in begin()
     static const uint8_t ku8MaxBufferSize                = 64;   ///< size of response/transmit buffers    
     uint16_t _u16ReadAddress;                                    ///< slave register from which to read
     uint16_t _u16ReadQty;                                        ///< quantity of words to read
