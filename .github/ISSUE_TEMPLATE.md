@@ -1,5 +1,12 @@
-<!--
-Please provide the following information for all issues
+<!----------------------------------------------------------------------------
+Title - ensure the issue title is clear & concise
+- QUESTIONS - describe the specific question
+- BUG REPORTS - describe an activity
+- FEATURE REQUESTS - describe an activity
+-->
+
+<!----------------------------------------------------------------------------
+Provide the following information for all issues. Replace placeholder text, including [brackets].
 (QUESTIONS, BUG REPORTS, FEATURE REQUESTS)
 -->
 ### ModbusMaster version
@@ -9,14 +16,14 @@ Please provide the following information for all issues
 [Version of Arduino IDE in your environment]
 
 ### Arduino Hardware
-[Hardware information, including board and processor.]
+[Hardware information, including board and processor]
 
 ### Platform Details
-[Operating system distribution and release version.]
+[Operating system distribution and release version]
 
 ---
-<!--
-Provide the following for QUESTIONS & BUG REPORTS
+<!----------------------------------------------------------------------------
+Provide the following for QUESTIONS & BUG REPORTS. Replace placeholder text, including [brackets].
 -->
 ### Scenario:
 [What you are trying to achieve and you can't?]
@@ -31,12 +38,11 @@ Provide the following for QUESTIONS & BUG REPORTS
 [What actually happens after the reproduction steps? Include the error output or a link to a gist if possible.]
 
 ---
-<!--
-Provide the following for FEATURE REQUESTS
+<!----------------------------------------------------------------------------
+Provide the following for FEATURE REQUESTS. Replace placeholder text, including [brackets].
 Refer to [What's in a Story?](https://dannorth.net/whats-in-a-story/)
 -->
 ### Feature Request
-<!-- Issue Title (should describe an activity) -->
 
 #### Narrative:
 <!-- Replace role, feature, benefit. -->
