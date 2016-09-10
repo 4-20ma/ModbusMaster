@@ -55,12 +55,7 @@ Installation
 
 Support
 -------
-Please report any bugs on the [Issue Tracker](https://github.com/4-20ma/ModbusMaster/issues).
-
-
-Questions/Feedback
-------------------
-I can be contacted at 4-20ma at wvfans dot net.
+Please [submit an issue](https://github.com/4-20ma/ModbusMaster/issues) for all questions, bug reports, and feature requests. Email requests will be politely redirected to the issue tracker so others may contribute to the discussion and requestors get a more timely response.
 
 
 Example
