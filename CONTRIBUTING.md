@@ -21,3 +21,4 @@ Contributing
     - Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
 
 - Push to your fork and [submit a pull request](https://github.com/4-20ma/ModbusMaster/compare/)
+- [Code of conduct](https://github.com/4-20ma/ModbusMaster/blob/master/CODE_OF_CONDUCT.md)
