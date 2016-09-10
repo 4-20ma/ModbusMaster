@@ -1,10 +1,12 @@
 ModbusMaster
 ============
-[![GitHub tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg)][GitHub tag]
-[![GitHub license](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg)][GitHub license]
+[![Tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg)][Tag]
+[![License](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg)][License]
+[![Code of conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg)][Code of conduct]
 
-[GitHub tag]:     https://github.com/4-20ma/ModbusMaster
-[GitHub license]: COPYING
+[Tag]:              https://github.com/4-20ma/ModbusMaster
+[License]:          COPYING
+[Code of conduct]:  https://github.com/4-20ma/ModbusMaster/blob/master/CODE_OF_CONDUCT.md
 
 Overview
 --------
