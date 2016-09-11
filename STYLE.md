@@ -92,7 +92,7 @@ Since the pre-processor knows nothing about C++, it should not be used to do wha
 
   **Rationale**: Clarity. The only files included in a .cpp file should be the relevant header (\*.h) files.
 
-  
+
 Header Files \[JSFAV 4.7\]
 ------------
 
