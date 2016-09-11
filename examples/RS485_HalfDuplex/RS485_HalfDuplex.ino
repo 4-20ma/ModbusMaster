@@ -3,7 +3,8 @@
   RS485_HalfDuplex.pde - example using ModbusMaster library
 
   This example is tested against an EPSolar LS2024B solar charge controller.
-  See here for protocol specs: http://www.solar-elektro.cz/data/dokumenty/1733_modbus_protocol.pdf
+  See here for protocol specs:
+  http://www.solar-elektro.cz/data/dokumenty/1733_modbus_protocol.pdf
 
   This file is part of ModbusMaster.
   
@@ -61,7 +62,7 @@ void setup()
 
   // Modbus slave ID 1
   node.begin(1, Serial);
-  // Hook up callbacks allowing us to configure the RS485 transceiver correctly
+  // Callbacks allow us to configure the RS485 transceiver correctly
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
 }
@@ -79,13 +80,15 @@ void loop()
 
   // Read 16 registers starting at 0x3100)
   result = node.readInputRegisters(0x3100, 16);
-  if (result == node.ku8MBSuccess) {
+  if (result == node.ku8MBSuccess)
+  {
     Serial.print("Vbatt: ");
     Serial.println(node.getResponseBuffer(0x04)/100.0f);
     Serial.print("Vload: ");
     Serial.println(node.getResponseBuffer(0xC0)/100.0f);
     Serial.print("Pload: ");
-    Serial.println((node.getResponseBuffer(0x0D) + node.getResponseBuffer(0x0E) << 16)/100.0f);
+    Serial.println((node.getResponseBuffer(0x0D) +
+                    node.getResponseBuffer(0x0E) << 16)/100.0f);
   }
 
   delay(1000);
