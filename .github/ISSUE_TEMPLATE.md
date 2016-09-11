@@ -46,17 +46,21 @@ Refer to [What's in a Story?](https://dannorth.net/whats-in-a-story/)
 
 #### Narrative:
 <!-- Replace role, feature, benefit. -->
+```` text
 As a [role]
 I want [feature]
 So that [benefit]
+````
 
 #### Acceptance Criteria:
 <!--
 Present as one or more Scenarios, replacing context, event, outcome.
 -->
+```` text
 Scenario 1: Title
 Given [context]
   And [some more context]...
 When  [event]
 Then  [outcome]
   And [another outcome]...
+````
