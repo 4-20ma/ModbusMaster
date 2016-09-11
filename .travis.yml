@@ -8,11 +8,11 @@ before_install:
   - sudo mv arduino-1.6.5 /usr/local/share/arduino
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
 install:
-  - ln -s $PWD /usr/local/share/arduino/libraries/ModbusMaster
+  - ln -s ${PWD} /usr/local/share/arduino/libraries/ModbusMaster
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
-  - "echo $PWD"
-  - "echo $HOME"
-  - "ls $PWD"
-  - source $TRAVIS_BUILD_DIR/travis/common.sh
+  - echo $PWD
+  - echo $HOME
+  - ls -al $PWD
+  - source ${TRAVIS_BUILD_DIR}/travis/common.sh
   - build_examples
