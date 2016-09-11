@@ -6,10 +6,10 @@ Provide the following information for all issues. Replace [brackets] and placeho
 (QUESTIONS, BUG REPORTS, FEATURE REQUESTS).
 -->
 ### Description
-[Describe what this change achieves; include Fixes #xxx or Closes #xxx (where xxx is issue number) in description]
+[Describe what this change achieves]
 
 ### Issues Resolved
-[List any existing issues this PR resolves]
+[List any existing issues this PR resolves; include Fixes #xxx or Closes #xxx (where xxx is issue number)]
 
 ### Check List
 
