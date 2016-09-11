@@ -42,32 +42,32 @@ task :default => :info
 desc 'Display instructions for public release'
 task :info do
   puts <<-EOF.gsub(/^\s{2}/, '')
-  
+
   Instructions for public release
-  
+
   - Update version, as appropriate:
-  
+
     $ rake version:bump           # or
     $ rake version:bump:minor     # or
     $ rake version:bump:major     # or
     edit 'VERSION' file directly
-    
+
   - Prepare release date, 'HISTORY.md' file, documentation:
-  
+
     $ rake prepare
-    
+
   - Review changes to 'HISTORY.md' file
     This file is assembled using git commit messages; review for completeness.
-  
+
   - Review html documentation files
     These files are assembled using source code Doxygen tags; review for
     for completeness.
-  
+
   - Add & commit source files, tag, push to origin/master;
     add & commit documentation files, push to origin/gh-pages:
-  
+
     $ rake release
-    
+
   EOF
 end # task :info
 
@@ -82,57 +82,57 @@ namespace :prepare do
     :history,
     :documentation
   ]
-  
+
   desc 'Prepare documentation'
   task :documentation do
     version = Version.current.to_s
-    
+
     # update parameters in Doxyfile
     file = File.join(CWD, 'doc', DOXYFILE)
-    
+
     contents = IO.read(file)
     contents.sub!(/(^PROJECT_NUMBER\s*=)(.*)$/) do |match|
       "#{$1} v#{version}"
     end # contents.sub!(...)
     IO.write(file, contents)
-    
+
     # chdir to doc/ and call doxygen to update documentation
     Dir.chdir(to = File.join(CWD, 'doc'))
     system('doxygen', DOXYFILE)
-    
+
     # chdir to doc/latex and call doxygen to update documentation
     Dir.chdir(from = File.join(CWD, 'doc', 'latex'))
     system('make')
-    
+
     # move/rename file to 'doc/GITHUB_REPO reference-x.y.pdf'
     FileUtils.mv(File.join(from, 'refman.pdf'),
       File.join(to, "#{GITHUB_REPO} reference-#{version}.pdf"))
   end # task :documentation
-  
+
   desc 'Prepare release history'
   task :history, :tag do |t, args|
     g = Git.open(CWD)
-    
+
     current_tag = args[:tag] || Version.current.to_s
     prior_tag = g.tags.last
-    
+
     history = "## [v#{current_tag} (#{Time.now.strftime('%Y-%m-%d')})]"
     history << "(https://github.com/#{GITHUB_USERNAME}/#{GITHUB_REPO}/tree"
     history << "/v#{current_tag})\n"
-    
+
     commits = prior_tag ? g.log.between(prior_tag) : g.log
     history << commits.map do |commit|
       "- #{commit.message}"
     end.join("\n")
     history << "\n\n---\n"
-    
+
     file = File.join(CWD, HISTORY_FILE)
     puts "Updating file #{file}:"
     puts history
     contents = IO.read(file)
     IO.write(file, history << contents)
   end # task :history
-  
+
   desc 'Update version in library properties file'
   task :library_properties do
     version = Version.current.to_s
@@ -149,14 +149,14 @@ namespace :prepare do
   desc 'Update release date in header file'
   task :release_date do
     file = File.join(CWD, HEADER_FILE)
-    
+
     contents = IO.read(file)
     contents.sub!(/(\\date\s*)(.*)$/) do |match|
       "#{$1}#{Time.now.strftime('%-d %b %Y')}"
     end # contents.sub!(...)
     IO.write(file, contents)
   end # task :release_date
-  
+
 end # namespace :prepare
 
 
@@ -165,21 +165,21 @@ task :release => 'release:default'
 
 namespace :release do
   task :default => [:source, :documentation]
-  
+
   desc 'Commit documentation changes related to version bump'
   task :documentation do
     version = Version.current.to_s
     cwd = File.expand_path(File.join(File.dirname(__FILE__), 'doc', 'html'))
     g = Git.open(cwd)
-    
+
     # `git add .`
     g.add
-    
+
     # remove each deleted item
     g.status.deleted.each do |item|
       g.remove(item[0])
     end # g.status.deleted.each
-    
+
     # commit changes if items added, changed, or deleted
     if g.status.added.size > 0 || g.status.changed.size > 0 ||
       g.status.deleted.size > 0 then
@@ -188,10 +188,10 @@ namespace :release do
     else
       puts "No changes to commit v#{version}"
     end # if g.status.added.size > 0 || g.status.changed.size > 0...
-    
+
     g.push('origin', 'gh-pages')
   end # task :documentation
-  
+
   desc 'Commit source changes related to version bump'
   task :source do
     version = Version.current.to_s
@@ -202,5 +202,5 @@ namespace :release do
     `git push origin master`
     `git push --tags`
   end # task :source
-  
+
 end # namespace :release
