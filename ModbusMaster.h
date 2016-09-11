@@ -39,7 +39,7 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 
 
 /**
-@def __MODBUSMASTER_DEBUG__ (1).
+@def __MODBUSMASTER_DEBUG__ (0)
 Set to 1 to enable debugging features within class:
   - PIN A cycles for each byte read in the Modbus response
   - PIN B cycles for each millisecond timeout during the Modbus response
