@@ -48,7 +48,6 @@ Set to 1 to enable debugging features within class:
 #define __MODBUSMASTER_DEBUG_PIN_A__ 4
 #define __MODBUSMASTER_DEBUG_PIN_B__ 5
 
-
 /* _____STANDARD INCLUDES____________________________________________________ */
 // include types & constants of Wiring core API
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -77,10 +76,12 @@ class ModbusMaster
 {
   public:
     ModbusMaster();
-    
+   
     void begin(uint8_t, Stream &serial);
     void idle(void (*)());
-    
+    void preTransmission(void (*)());
+    void postTransmission(void (*)());
+
     // Modbus exception codes
     /**
     Modbus protocol illegal function exception.
@@ -261,6 +262,10 @@ class ModbusMaster
     
     // idle callback function; gets called during idle time between TX and RX
     void (*_idle)();
+    // preTransmission callback function; gets called before writing a Modbus message
+    void (*_preTransmission)();
+    // postTransmission callback function; gets called after a Modbus message has been sent
+    void (*_postTransmission)();
 };
 #endif
 

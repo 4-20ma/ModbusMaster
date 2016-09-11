@@ -45,8 +45,10 @@ Creates class object; initialize it using ModbusMaster::begin().
 */
 ModbusMaster::ModbusMaster(void)
 {
+  _idle = 0;
+  _preTransmission = 0;
+  _postTransmission = 0;
 }
-
 
 /**
 Initialize class object.
@@ -181,6 +183,37 @@ serial ports, etc. is permitted within callback function.
 void ModbusMaster::idle(void (*idle)())
 {
   _idle = idle;
+}
+
+/**
+Set pre-transmission callback function.
+
+This function gets called just before a Modbus message is sent over serial.
+Typical usage of this callback is to enable an RS485 transceiver's
+Driver Enable pin, and optionally disable its Receiver Enable pin.
+
+@see ModbusMaster::postTransmission()
+*/
+void ModbusMaster::preTransmission(void (*preTransmission)())
+{
+  _preTransmission = preTransmission;
+}
+
+/**
+Set post-transmission callback function.
+
+This function gets called after a Modbus message has finished sending
+(i.e. after all data has been physically transmitted onto the serial
+bus).
+
+Typical usage of this callback is to enable an RS485 transceiver's
+Receiver Enable pin, and disable its Driver Enable pin.
+
+@see ModbusMaster::postTransmission()
+*/
+void ModbusMaster::postTransmission(void (*postTransmission)())
+{
+  _postTransmission = postTransmission;
 }
 
 
@@ -672,6 +705,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   while (_serial->read() != -1);
 
   // transmit request
+  if (_preTransmission)
+  {
+    _preTransmission();
+  }
   for (i = 0; i < u8ModbusADUSize; i++)
   {
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -683,6 +720,10 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
+  if (_postTransmission)
+  {
+    _postTransmission();
+  }
   
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();
