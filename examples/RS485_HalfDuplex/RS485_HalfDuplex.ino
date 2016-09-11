@@ -1,28 +1,29 @@
 /*
 
-  RS485_HalfDuplex.pde - example using ModbusMaster library
+  RS485_HalfDuplex.pde - example using ModbusMaster library to communicate
+  with EPSolar LS2024B controller using a half-duplex RS485 transceiver.
 
   This example is tested against an EPSolar LS2024B solar charge controller.
   See here for protocol specs:
   http://www.solar-elektro.cz/data/dokumenty/1733_modbus_protocol.pdf
 
-  This file is part of ModbusMaster.
-  
-  ModbusMaster is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  ModbusMaster is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with ModbusMaster.  If not, see <http://www.gnu.org/licenses/>.
-  
-  Written by Marius Kintel <marius at kintel dot net>
-  
+  Library:: ModbusMaster
+  Author:: Marius Kintel <marius at kintel dot net>
+
+  Copyright:: 2009-2016 Doc Walker
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
 */
 #include <ModbusMaster.h>
 
