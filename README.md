@@ -1,10 +1,12 @@
 ModbusMaster
 ============
 [![Tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg)][Tag]
+[![Travis](https://img.shields.io/travis/4-20ma/ModbusMaster.svg)][Travis]
 [![License](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg)][License]
 [![Code of conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg)][Code of conduct]
 
 [Tag]:              https://github.com/4-20ma/ModbusMaster
+[Travis]:           https://travis-ci.org/4-20ma/ModbusMaster
 [License]:          COPYING
 [Code of conduct]:  https://github.com/4-20ma/ModbusMaster/blob/master/CODE_OF_CONDUCT.md
 
