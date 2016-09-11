@@ -19,6 +19,7 @@ source 'https://rubygems.org'
 
 # place general project gems in this section (alphabetical order) ____________
 gem 'git', '~> 1.3.0'     # git management
+gem 'github_changelog_generator', '~> 1.13.1'
 gem 'rake', '~> 11.2.2'
 gem 'version', '~> 1.0.0' # version management gem
 

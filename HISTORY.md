@@ -1,3 +1,7 @@
+<!--
+This file is no longer maintained; refer to CHANGELOG.md, which automatically
+incorporates appends content from this file.
+-->
 ## [v0.11.0 (2015-05-22)](https://github.com/4-20ma/ModbusMaster/tree/v0.11.0)
 - Fix grammar in library.properties
 - Fix broken links in HISTORY, Rakefile
