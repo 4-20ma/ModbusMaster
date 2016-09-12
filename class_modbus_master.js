@@ -1,11 +1,10 @@
 var class_modbus_master =
 [
     [ "ModbusMaster", "group__setup.html#gac33a5bbc8188eb4a3a9a6bf8494bdc27", null ],
-    [ "ModbusMaster", "group__setup.html#ga79102d6dd559b647c8a5a385184b89cd", null ],
-    [ "ModbusMaster", "group__setup.html#ga508ecee40cf75898f27f8404c1574164", null ],
-    [ "begin", "group__setup.html#ga0f393213ede2f78801fca5add4eab139", null ],
-    [ "begin", "group__setup.html#gabc1145dc790c2b8da2d5c20ff34b187e", null ],
+    [ "begin", "group__setup.html#ga9504f5d093148553c45e9c274a87722b", null ],
     [ "idle", "class_modbus_master.html#aea6654dac81e6b692dd6a1b0be8a218e", null ],
+    [ "preTransmission", "class_modbus_master.html#a66c1b8136e08ee49af3c3ce0a85fa2b3", null ],
+    [ "postTransmission", "class_modbus_master.html#adcce7420163ed969890da13e2fa76a50", null ],
     [ "getResponseBuffer", "group__buffer.html#ga5e932dcb444f23094d6bf74963c5dccc", null ],
     [ "clearResponseBuffer", "group__buffer.html#ga492bf8f5389f1fca62d3666028070edb", null ],
     [ "setTransmitBuffer", "group__buffer.html#gaef93f45298dfab2a7816bd38dac34bc9", null ],
@@ -41,9 +40,8 @@ var class_modbus_master =
     [ "ku8MBInvalidFunction", "group__constant.html#ga31e9072531cf487c137b68b5e1e68926", null ],
     [ "ku8MBResponseTimedOut", "group__constant.html#ga8eb8e14ee2bcf58afc3fbbb4014f297c", null ],
     [ "ku8MBInvalidCRC", "group__constant.html#gaa73463392a988bbc5260690168b5ca08", null ],
-    [ "_u8SerialPort", "class_modbus_master.html#a8059450709d3ef2f7b817e24ede57a94", null ],
+    [ "_serial", "class_modbus_master.html#abf1633a829a529c9a9028872f4c559e1", null ],
     [ "_u8MBSlave", "class_modbus_master.html#a8bc19d22b864e85ad67b4b633fa56597", null ],
-    [ "_u16BaudRate", "class_modbus_master.html#a2c3bdb0037ef87da266e46a6ecdd8a84", null ],
     [ "ku8MaxBufferSize", "class_modbus_master.html#ab9a1a34c8e3bbd84529230e559694c29", null ],
     [ "_u16ReadAddress", "class_modbus_master.html#adfb48ef6321f738cc4b55c4b6e4a6335", null ],
     [ "_u16ReadQty", "class_modbus_master.html#a043a88f0b184accd9176770dee55a6b3", null ],
@@ -68,5 +66,7 @@ var class_modbus_master =
     [ "ku8MBMaskWriteRegister", "class_modbus_master.html#a1de5e699bcada855fb26e336d2cd2cd3", null ],
     [ "ku8MBReadWriteMultipleRegisters", "class_modbus_master.html#af1c77f6f5f7e0f19d0c9b9916dca2263", null ],
     [ "ku16MBResponseTimeout", "class_modbus_master.html#a31d5f182084de9eaa76ff24f7ca736c2", null ],
-    [ "_idle", "class_modbus_master.html#ab68156649f2938a966192c69834342e8", null ]
+    [ "_idle", "class_modbus_master.html#ab68156649f2938a966192c69834342e8", null ],
+    [ "_preTransmission", "class_modbus_master.html#a2d34f258acb4b841d52eb72b27d3d57a", null ],
+    [ "_postTransmission", "class_modbus_master.html#a3a2c24d76a629515d89ac0849812b26d", null ]
 ];

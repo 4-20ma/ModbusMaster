@@ -2,8 +2,8 @@ var NAVTREE =
 [
   [ "ModbusMaster", "index.html", [
     [ "Modules", "modules.html", "modules" ],
-    [ "Classes", null, [
-      [ "Class List", "annotated.html", "annotated" ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
         [ "Functions", "functions_func.html", null ],
