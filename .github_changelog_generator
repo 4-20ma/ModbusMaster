@@ -5,5 +5,4 @@ bug-labels=Type: Bug
 exclude-labels=Type: Question
 header=# ModbusMaster CHANGELOG
 include-labels=Type: Bug,Type: Enhancement,Type: Feature Request,Type: Maintenance
-since-tag=0.10.0
 future-release=Unreleased

@@ -16,6 +16,7 @@
 #
 
 require 'git'
+require 'github_changelog_generator/task'
 require 'rake'
 require 'rubygems'
 require 'rake/version_task'         # gem install version
@@ -32,7 +33,7 @@ DOXYFILE        = 'Doxyfile'
 GITHUB_USERNAME = '4-20ma'
 GITHUB_REPO     = 'ModbusMaster'
 HEADER_FILE     = "#{GITHUB_REPO}.h"
-HISTORY_FILE    = 'HISTORY.md'
+CHANGELOG_FILE  = 'CHANGELOG.md'
 PROPERTIES_FILE = 'library.properties'
 VERSION_FILE    = Version.version_file('').basename.to_s
 
@@ -72,14 +73,14 @@ task :info do
 end # task :info
 
 
-desc 'Prepare HISTORY file for release'
+desc "Prepare #{CHANGELOG_FILE} for release"
 task :prepare => 'prepare:default'
 
 namespace :prepare do
   task :default => [
     :release_date,
     :library_properties,
-    :history,
+    :changelog,
     :documentation
   ]
 
@@ -110,28 +111,27 @@ namespace :prepare do
   end # task :documentation
 
   desc 'Prepare release history'
-  task :history, :tag do |t, args|
-    g = Git.open(CWD)
-
-    current_tag = args[:tag] || Version.current.to_s
-    prior_tag = g.tags.last
-
-    history = "## [v#{current_tag} (#{Time.now.strftime('%Y-%m-%d')})]"
-    history << "(https://github.com/#{GITHUB_USERNAME}/#{GITHUB_REPO}/tree"
-    history << "/v#{current_tag})\n"
-
-    commits = prior_tag ? g.log.between(prior_tag) : g.log
-    history << commits.map do |commit|
-      "- #{commit.message}"
-    end.join("\n")
-    history << "\n\n---\n"
-
-    file = File.join(CWD, HISTORY_FILE)
-    puts "Updating file #{file}:"
-    puts history
-    contents = IO.read(file)
-    IO.write(file, history << contents)
-  end # task :history
+  GitHubChangelogGenerator::RakeTask.new(:changelog) do |config|
+    config.add_issues_wo_labels = false
+    config.add_pr_wo_labels = false
+    config.enhancement_labels = [
+      'Type: Enhancement',
+      'Type: Feature Request'
+    ]
+    config.bug_labels = ['Type: Bug']
+    config.exclude_labels = ['Type: Question']
+    config.header = '# ModbusMaster CHANGELOG'
+    config.include_labels = [
+      'Type: Bug',
+      'Type: Enhancement',
+      'Type: Feature Request',
+      'Type: Maintenance'
+    ]
+    # config.since_tag = '0.1.0'
+    config.future_release = "v#{Version.current.to_s}"
+    config.user = GITHUB_USERNAME
+    config.project = GITHUB_REPO
+  end # GitHubChangelogGenerator::RakeTask.new
 
   desc 'Update version in library properties file'
   task :library_properties do
@@ -196,7 +196,7 @@ namespace :release do
   task :source do
     version = Version.current.to_s
     `git add doc/#{DOXYFILE} "doc/#{GITHUB_REPO} reference-#{version}.pdf" \
-      #{HEADER_FILE} #{HISTORY_FILE} #{PROPERTIES_FILE} #{VERSION_FILE}`
+      #{HEADER_FILE} #{CHANGELOG_FILE} #{PROPERTIES_FILE} #{VERSION_FILE}`
     `git commit -m 'Version bump to v#{version}'`
     `git tag -a -f -m 'Version v#{version}' v#{version}`
     `git push origin master`
