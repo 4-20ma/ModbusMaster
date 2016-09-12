@@ -22,6 +22,12 @@ require 'rubygems'
 require 'rake/version_task'         # gem install version
 require 'version'
 
+# requires additional packages on MacOS (including Homebrew):
+# $ /usr/bin/ruby -e "$(curl -fsSL \
+#   https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# $ brew install doxygen        # generates documentation from source code
+# $ brew cask install mactex    # MacTeX
+
 Rake::VersionTask.new do |task|
   # prevent auto-commit on version bump
   task.with_git = false
@@ -53,11 +59,11 @@ task :info do
     $ rake version:bump:major     # or
     edit 'VERSION' file directly
 
-  - Prepare release date, 'HISTORY.md' file, documentation:
+  - Prepare release date, 'CHANGELOG.md' file, documentation:
 
     $ rake prepare
 
-  - Review changes to 'HISTORY.md' file
+  - Review changes to 'CHANGELOG.md' file
     This file is assembled using git commit messages; review for completeness.
 
   - Review html documentation files
