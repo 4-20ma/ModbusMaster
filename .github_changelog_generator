@@ -1,0 +1,8 @@
+add_issues_wo_labels=false
+add_pr_wo_labels=false
+enhancement-labels=Type: Enhancement,Type: Feature Request
+bug-labels=Type: Bug
+exclude-labels=Type: Question
+header=# ModbusMaster CHANGELOG
+include-labels=Type: Bug,Type: Enhancement,Type: Feature Request,Type: Maintenance
+future-release=Unreleased

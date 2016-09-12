@@ -31,7 +31,7 @@ The following have **NOT** been modified
 - [ ] doc/ - will be updated upon versioned release
 - [ ] .ruby-gemset
 - [ ] .ruby-version
+- [ ] CHANGELOG.md - will be updated upon versioned release (HISTORY.md is deprecated)
 - [ ] Gemfile
-- [ ] HISTORY.md - will be updated upon versioned release
 - [ ] LICENSE
 - [ ] VERSION - will be updated upon versioned release
