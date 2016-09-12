@@ -190,6 +190,7 @@ This function gets called just before a Modbus message is sent over serial.
 Typical usage of this callback is to enable an RS485 transceiver's
 Driver Enable pin, and optionally disable its Receiver Enable pin.
 
+@see ModbusMaster::ModbusMasterTransaction()
 @see ModbusMaster::postTransmission()
 */
 void ModbusMaster::preTransmission(void (*preTransmission)())
@@ -207,7 +208,8 @@ bus).
 Typical usage of this callback is to enable an RS485 transceiver's
 Receiver Enable pin, and disable its Driver Enable pin.
 
-@see ModbusMaster::postTransmission()
+@see ModbusMaster::ModbusMasterTransaction()
+@see ModbusMaster::preTransmission()
 */
 void ModbusMaster::postTransmission(void (*postTransmission)())
 {

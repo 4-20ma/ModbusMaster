@@ -270,4 +270,5 @@ class ModbusMaster
 /**
 @example examples/Basic/Basic.pde
 @example examples/PhoenixContact_nanoLC/PhoenixContact_nanoLC.pde
+@example examples/RS485_HalfDuplex/RS485_HalfDuplex.ino
 */
