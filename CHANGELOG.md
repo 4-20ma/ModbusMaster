@@ -1,7 +1,7 @@
 # ModbusMaster CHANGELOG
 
-## [v0.12.0](https://github.com/4-20ma/ModbusMaster/tree/v0.12.0) (2016-09-11)
-[Full Changelog](https://github.com/4-20ma/ModbusMaster/compare/v0.11.0...v0.12.0)
+## [v1.0.0](https://github.com/4-20ma/ModbusMaster/tree/v1.0.0) (2016-09-11)
+[Full Changelog](https://github.com/4-20ma/ModbusMaster/compare/v0.11.0...v1.0.0)
 
 **Implemented enhancements:**
 
@@ -25,6 +25,7 @@
 
 **Closed issues:**
 
+- Fix documentation references in ModbusMaster.h, .cpp [\#69](https://github.com/4-20ma/ModbusMaster/issues/69)
 - Clean up template wording [\#64](https://github.com/4-20ma/ModbusMaster/issues/64)
 - Add Label section to CONTRIBUTING [\#60](https://github.com/4-20ma/ModbusMaster/issues/60)
 - Update README contact information [\#58](https://github.com/4-20ma/ModbusMaster/issues/58)
