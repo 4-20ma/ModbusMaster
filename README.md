@@ -33,7 +33,7 @@ Registers
   - 0x16 - Mask Write Register
   - 0x17 - Read Write Multiple Registers
 
-Both full-duplex and half-duplex RS485 transceivers are supported. Callback functions are provided to toggle Data Enable (DE) and Receiver Enable (<span style="text-decoration: overline">RE</span>) pins.
+Both full-duplex and half-duplex RS232/485 transceivers are supported. Callback functions are provided to toggle Data Enable (DE) and Receiver Enable (<span style="text-decoration: overline">RE</span>) pins.
 
 
 ## Uploading Sketches
