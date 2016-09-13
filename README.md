@@ -1,37 +1,41 @@
 # ModbusMaster
-[![Tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg)][Tag]
-[![Travis](https://img.shields.io/travis/4-20ma/ModbusMaster.svg)][Travis]
-[![License](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg)][License]
-[![Code of conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg)][Code of conduct]
+[![GitHub release](https://img.shields.io/github/release/4-20ma/ModbusMaster.svg?maxAge=3600)][GitHub release]
+[![GitHub tag](https://img.shields.io/github/tag/4-20ma/ModbusMaster.svg?maxAge=3600)][GitHub tag]
+[![Travis](https://img.shields.io/travis/4-20ma/ModbusMaster.svg?maxAge=3600)][Travis]
+[![license](https://img.shields.io/github/license/4-20ma/ModbusMaster.svg?maxAge=3600)][license]
+[![code of conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg?maxAge=3600)][code of conduct]
 
-[Tag]:              https://github.com/4-20ma/ModbusMaster
+[GitHub release]:   https://github.com/4-20ma/ModbusMaster
+[GitHub tag]:       https://github.com/4-20ma/ModbusMaster
 [Travis]:           https://travis-ci.org/4-20ma/ModbusMaster
-[License]:          LICENSE
-[Code of conduct]:  https://github.com/4-20ma/ModbusMaster/blob/master/CODE_OF_CONDUCT.md
+[license]:          LICENSE
+[code of conduct]:  CODE_OF_CONDUCT.md
 
 
 ## Overview
-This is an Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol). **Updated to support Arduino 1.6.**
+This is an Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol).
 
 
 ## Features
-The following Modbus functions have been implemented:
+The following Modbus functions are available:
 
 Discrete Coils/Flags
 
-  * 0x01 - Read Coils
-  * 0x02 - Read Discrete Inputs
-  * 0x05 - Write Single Coil
-  * 0x0F - Write Multiple Coils
+  - 0x01 - Read Coils
+  - 0x02 - Read Discrete Inputs
+  - 0x05 - Write Single Coil
+  - 0x0F - Write Multiple Coils
 
 Registers
 
-  * 0x03 - Read Holding Registers
-  * 0x04 - Read Input Registers
-  * 0x06 - Write Single Register
-  * 0x10 - Write Multiple Registers
-  * 0x16 - Mask Write Register
-  * 0x17 - Read Write Multiple Registers
+  - 0x03 - Read Holding Registers
+  - 0x04 - Read Input Registers
+  - 0x06 - Write Single Register
+  - 0x10 - Write Multiple Registers
+  - 0x16 - Mask Write Register
+  - 0x17 - Read Write Multiple Registers
+
+Both full-duplex and half-duplex RS485 transceivers are supported. Callback functions are provided to toggle Data Enable (DE) and Receiver Enable (<span style="text-decoration: overline">RE</span>) pins.
 
 
 ## Uploading Sketches
@@ -43,13 +47,19 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
 
 
 ## Installation
-* Arduino 17 (or later):
 
-  Determine the location of your sketchbook by selecting _File > Preferences_ from within the Arduino IDE. If you don't already have a _libraries_ folder within your sketchbook, create one and unzip the archive there. See [this](http://arduino.cc/blog/?p=313) for more information.
+#### Library Manager
+Install the library into your Arduino IDE using the Library Manager (available from IDE version 1.6.2). Open the IDE and click Sketch > Include Library > Manage Libraries&hellip;
 
-* Arduino 16 (or earlier):
+Scroll or search for `ModbusMaster`, then select the version of the library you want to install. Quit/re-launch the IDE to refresh the list; new versions are automatically added to the list, once released on GitHub.
 
-  Download the zip file, extract and copy the _ModbusMaster_ folder to _ARDUINO\_HOME/hardware/libraries_. If you are upgrading from a previous version, be sure to delete ModbusMaster.o.
+Refer to Arduino Tutorials > Libraries [Using the Library Manager](https://www.arduino.cc/en/Guide/Libraries#toc3).
+
+#### Zip Library
+Refer to Arduino Tutorials > Libraries [Importing a .zip Library](https://www.arduino.cc/en/Guide/Libraries#toc4).
+
+#### Manual
+Refer to Arduino Tutorials > Libraries [Manual Installation](https://www.arduino.cc/en/Guide/Libraries#toc5).
 
 
 ## Support
@@ -57,7 +67,7 @@ Please [submit an issue](https://github.com/4-20ma/ModbusMaster/issues) for all 
 
 
 ## Example
-The library contains a few sketches that demonstrate use of the ModbusMaster library. You can find these in the [examples](https://github.com/4-20ma/ModbusMaster/tree/master/examples) folder.
+The library contains a few sketches that demonstrate use of the `ModbusMaster` library. You can find these in the [examples](https://github.com/4-20ma/ModbusMaster/tree/master/examples) folder.
 
 ``` cpp
 /*
