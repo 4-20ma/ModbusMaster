@@ -15,6 +15,12 @@ Contributing
 
 - Test your change
 
+    ```` bash
+    $ make
+    ````
+
+    Project must build successfully using `make` in order for contribution to be considered.
+
 - Make commits of logical units
     - Check for unnecessary whitespace with `git diff --check` before committing
     - Each commit should represent one atomic change and should stand on its own
