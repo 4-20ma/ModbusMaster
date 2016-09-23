@@ -4,7 +4,7 @@ DIR           := examples
 CRITERIA      := \( -name "*.ino" -o -name "*.pde" \)
 EACH_EXAMPLE  := $(FIND) $(DIR) $(CRITERIA) -exec
 BUILD         := platformio ci
-LIB           := .
+LIB           := src
 
 #--------------------------------------------------------------------- targets
 # update .travis.yml if target boards added
