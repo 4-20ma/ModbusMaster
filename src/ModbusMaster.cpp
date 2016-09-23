@@ -711,11 +711,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   }
   for (i = 0; i < u8ModbusADUSize; i++)
   {
-#if defined(ARDUINO) && ARDUINO >= 100
     _serial->write(u8ModbusADU[i]);
-#else
-    _serial->print(u8ModbusADU[i], BYTE);
-#endif
   }
   
   u8ModbusADUSize = 0;

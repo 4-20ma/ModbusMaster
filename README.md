@@ -57,6 +57,8 @@ This library has been tested with an Arduino [Duemilanove](http://www.arduino.cc
 
 
 ## Caveats
+Conforms to Arduino IDE 1.5 Library Specification v2.1 which requires Arduino IDE >= 1.5.
+
 Arduinos prior to the Mega have one serial port which must be connected to USB (FTDI) for uploading sketches and to the RS232/485 device/network for running sketches. You will need to disconnect pin 0 (RX) while uploading sketches. After a successful upload, you can reconnect pin 0.
 
 
