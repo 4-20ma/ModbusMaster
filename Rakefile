@@ -111,7 +111,8 @@ namespace :prepare do
     Dir.chdir(from = File.join(CWD, 'doc', 'latex'))
     system('make')
 
-    # move/rename file to 'doc/GITHUB_REPO reference-x.y.pdf'
+    # move/rename file to 'extras/GITHUB_REPO reference-x.y.pdf'
+    to = File.join(CWD, 'extras')
     FileUtils.mv(File.join(from, 'refman.pdf'),
       File.join(to, "#{GITHUB_REPO} reference-#{version}.pdf"))
   end # task :documentation
@@ -154,7 +155,7 @@ namespace :prepare do
 
   desc 'Update release date in header file'
   task :release_date do
-    file = File.join(CWD, HEADER_FILE)
+    file = File.join(CWD, 'src', HEADER_FILE)
 
     contents = IO.read(file)
     contents.sub!(/(\\date\s*)(.*)$/) do |match|
@@ -201,8 +202,14 @@ namespace :release do
   desc 'Commit source changes related to version bump'
   task :source do
     version = Version.current.to_s
-    `git add doc/#{DOXYFILE} "doc/#{GITHUB_REPO} reference-#{version}.pdf" \
-      #{HEADER_FILE} #{CHANGELOG_FILE} #{PROPERTIES_FILE} #{VERSION_FILE}`
+    `git add \
+      doc/#{DOXYFILE} \
+      extras/#{GITHUB_REPO} reference-#{version}.pdf \
+      src/#{HEADER_FILE} \
+      #{CHANGELOG_FILE} \
+      #{PROPERTIES_FILE} \
+      #{VERSION_FILE} \
+    `
     `git commit -m 'Version bump to v#{version}'`
     `git tag -a -f -m 'Version v#{version}' v#{version}`
     `git push origin master`
