@@ -25,7 +25,6 @@ before_script:
   - echo $HOME
   - echo $TRAVIS_BUILD_DIR
   - ls -al $PWD
-  - platformio --version
 
 script:
   - make build
