@@ -21,10 +21,13 @@ install:
   - pip install -U platformio
 
 before_script:
+  - echo Environment:
   - env
   - echo $HOME
   - echo $TRAVIS_BUILD_DIR
   - ls -al $PWD
+  - echo Versions:
+  - python --version && pip --version && platformio --version
 
 script:
   - make build
