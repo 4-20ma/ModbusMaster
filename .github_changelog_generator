@@ -1,6 +1,6 @@
 add_issues_wo_labels=false
 add_pr_wo_labels=false
-enhancement-labels=Type: Enhancement,Type: Feature Request
+enhancement-labels=Type: Enhancement
 bug-labels=Type: Bug
 exclude-labels=Type: Question
 header=# ModbusMaster CHANGELOG

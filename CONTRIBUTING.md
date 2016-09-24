@@ -36,8 +36,8 @@ Project maintainers assign labels to Issues and Pull Requests (PRs) to categoriz
 #### Type
 
 - `Bug` - existing code does not behave as described in the project documentation; _requires_ clear test case and be _reproducible_ by project maintainer
-- `Enhancement` - improvement to an existing feature
-- `Feature Requst` - new functionality; _requires_ a well-written, clear user story
+- `Enhancement` - improvement to an existing feature (Issue or Pull Request)
+- `Feature Requst` - new functionality; _requires_ a well-written, clear user story (Issue)
 - `Maintenance` - minor administrative change that does not provide enhancement or introduce new feature
 - `Question` - self-explanatory
 
