@@ -1,6 +1,6 @@
 # ModbusMaster CHANGELOG
 
-## [v2.0.0](https://github.com/4-20ma/ModbusMaster/tree/v2.0.0) (2016-09-23)
+## [v2.0.0](https://github.com/4-20ma/ModbusMaster/tree/v2.0.0) (2016-09-24)
 [Full Changelog](https://github.com/4-20ma/ModbusMaster/compare/v1.0.0...v2.0.0)
 
 **Implemented enhancements:**
