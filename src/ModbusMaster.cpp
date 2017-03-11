@@ -788,8 +788,13 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
-      u8ModbusADU[u16ModbusADUSize++] = _serial->read();
-      u8BytesLeft--;
+      int data = _serial->read();
+
+      if (data != -1)
+      {
+        u8ModbusADU[u16ModbusADUSize++] = data;
+        u8BytesLeft--;
+      }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
 #endif
