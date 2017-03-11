@@ -23,6 +23,7 @@
 */
 
 #include <ModbusMaster.h>
+#include <util/word.h>
 
 // discrete coils
 #define NANO_DO(n)   (0x0000 + n) ///< returns nanoLC discrete output address

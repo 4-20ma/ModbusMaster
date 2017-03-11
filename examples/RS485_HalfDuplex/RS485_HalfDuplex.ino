@@ -27,6 +27,7 @@
 */
 
 #include <ModbusMaster.h>
+#include <util/word.h>
 
 /*!
   We're using a MAX485-compatible RS485 Transceiver.
