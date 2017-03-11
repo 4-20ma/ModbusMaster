@@ -70,6 +70,8 @@ class ModbusMaster
     void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
+    void logTransmit(void (*)(const uint8_t *data, size_t length));
+    void logReceive(void (*)(const uint8_t *data, size_t length, uint8_t status));
 
     // Modbus exception codes
     /**
@@ -255,6 +257,10 @@ class ModbusMaster
     void (*_preTransmission)();
     // postTransmission callback function; gets called after a Modbus message has been sent
     void (*_postTransmission)();
+    // logTransmit callback function; gets called before writing a Modbus message
+    void (*_logTransmit)(const uint8_t *data, size_t length);
+    // logReceive callback function; gets called after reading a Modbus message
+    void (*_logReceive)(const uint8_t *data, size_t length, uint8_t status);
 };
 #endif
 

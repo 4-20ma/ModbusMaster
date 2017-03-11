@@ -51,6 +51,8 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _logTransmit = 0;
+  _logReceive = 0;
 }
 
 /**
@@ -219,6 +221,45 @@ Receiver Enable pin, and disable its Driver Enable pin.
 void ModbusMaster::postTransmission(void (*postTransmission)())
 {
   _postTransmission = postTransmission;
+}
+
+/**
+Set transmit log callback function.
+
+This function gets called before a Modbus message is sent.
+
+Typical usage of this callback is for debugging the messages that are
+sent on the bus.
+
+@see ModbusMaster::ModbusMasterTransaction()
+@see ModbusMaster::logReceive()
+*/
+void ModbusMaster::logTransmit(void (*logTransmit)(const uint8_t *data,
+  size_t length))
+{
+  _logTransmit = logTransmit;
+}
+
+/**
+Set receive log callback function.
+
+This function gets called after a Modbus message is received.
+
+It will only be called with the data that has been read, this may be
+shorter than the data on the bus if there was an error in the header.
+The status is provided to allow this to be detected or to only log
+messages where there was an error.
+
+Typical usage of this callback is for debugging the messages that are
+received on the bus.
+
+@see ModbusMaster::ModbusMasterTransaction()
+@see ModbusMaster::logReceive()
+*/
+void ModbusMaster::logReceive(void (*logReceive)(const uint8_t *data,
+  size_t length, uint8_t status))
+{
+  _logReceive = logReceive;
 }
 
 
@@ -706,6 +747,11 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
 
+  if (_logTransmit)
+  {
+    _logTransmit(u8ModbusADU, u8ModbusADUSize);
+  }
+
   // flush receive buffer before transmitting request
   while (_serial->read() != -1);
 
@@ -824,6 +870,11 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     {
       u8MBStatus = ku8MBInvalidCRC;
     }
+  }
+
+  if (_logReceive)
+  {
+    _logReceive(u8ModbusADU, u8ModbusADUSize, u8MBStatus);
   }
 
   // disassemble ADU into words
