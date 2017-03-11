@@ -185,6 +185,15 @@ class ModbusMaster
     */
     static const uint8_t ku8MBInvalidCRC                 = 0xE3;
     
+    /**
+    ModbusMaster response too large exception.
+
+    The response is too large to fit in the receive buffer.
+
+    @ingroup constant
+    */
+    static const uint8_t ku8MBResponseTooLarge           = 0xE4;
+
     uint16_t getResponseBuffer(uint8_t);
     void     clearResponseBuffer();
     uint8_t  setTransmitBuffer(uint8_t, uint16_t);
