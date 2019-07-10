@@ -22,6 +22,7 @@
 */
 
 #include <ModbusMaster.h>
+#include <util/word.h>
 
 
 // instantiate ModbusMaster object

@@ -54,11 +54,6 @@ Set to 1 to enable debugging features within class:
 
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
-// functions to calculate Modbus Application Data Unit CRC
-#include "util/crc16.h"
-
-// functions to manipulate words
-#include "util/word.h"
 
 
 /* _____CLASS DEFINITIONS____________________________________________________ */
@@ -75,6 +70,8 @@ class ModbusMaster
     void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
+    void logTransmit(void (*)(const uint8_t *data, size_t length));
+    void logReceive(void (*)(const uint8_t *data, size_t length, uint8_t status));
 
     // Modbus exception codes
     /**
@@ -188,6 +185,15 @@ class ModbusMaster
     */
     static const uint8_t ku8MBInvalidCRC                 = 0xE3;
     
+    /**
+    ModbusMaster response too large exception.
+
+    The response is too large to fit in the receive buffer.
+
+    @ingroup constant
+    */
+    static const uint8_t ku8MBResponseTooLarge           = 0xE4;
+
     uint16_t getResponseBuffer(uint8_t);
     void     clearResponseBuffer();
     uint8_t  setTransmitBuffer(uint8_t, uint16_t);
@@ -260,6 +266,10 @@ class ModbusMaster
     void (*_preTransmission)();
     // postTransmission callback function; gets called after a Modbus message has been sent
     void (*_postTransmission)();
+    // logTransmit callback function; gets called before writing a Modbus message
+    void (*_logTransmit)(const uint8_t *data, size_t length);
+    // logReceive callback function; gets called after reading a Modbus message
+    void (*_logReceive)(const uint8_t *data, size_t length, uint8_t status);
 };
 #endif
 
