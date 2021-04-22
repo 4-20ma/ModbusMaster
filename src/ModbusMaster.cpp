@@ -46,6 +46,7 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _u16ResponseTimeout = ku16MBDefaultResponseTimeout;
 }
 
 /**
@@ -134,9 +135,6 @@ void ModbusMaster::send(uint8_t data)
 {
   send(word(data));
 }
-
-
-
 
 
 
@@ -294,6 +292,22 @@ void ModbusMaster::clearTransmitBuffer()
   }
 }
 
+/**
+Get the response timeout.  Value is in msec.
+*/
+uint16_t ModbusMaster::getResponseTimeout()
+{
+   return _u16ResponseTimeout;
+}
+
+/**
+Sets the response timeout.  Value should be given in msec.
+The default is 2000 msec.
+*/
+void ModbusMaster::setResponseTimeout(uint16_t timeout)
+{
+  _u16ResponseTimeout = timeout;
+}
 
 /**
 Modbus function 0x01 Read Coils.
@@ -797,7 +811,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if ((millis() - u32StartTime) > _u16ResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
