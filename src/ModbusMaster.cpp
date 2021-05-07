@@ -709,10 +709,26 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     _preTransmission();
   }
+
+  #ifdef MODBUS_DEBUG       
+  Serial.println();
+  #endif
+  
   for (i = 0; i < u8ModbusADUSize; i++)
   {
     _serial->write(u8ModbusADU[i]);
+    
+   #ifdef MODBUS_DEBUG       
+    if (u8ModbusADU[i]<10) Serial.print("0");    
+    Serial.print (u8ModbusADU[i],HEX);
+    Serial.print(">");
+   #endif
+    
   }
+  
+ #ifdef MODBUS_DEBUG       
+ Serial.println();
+ #endif
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
@@ -726,12 +742,24 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   while (u8BytesLeft && !u8MBStatus)
   {
     if (_serial->available())
-    {
+    { uint8_t ch;
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
-      u8ModbusADU[u8ModbusADUSize++] = _serial->read();
-      u8BytesLeft--;
+      ch  = _serial->read();
+
+#ifdef MODBUS_DEBUG       
+          if (ch<10) Serial.print("0");
+          Serial.print (ch,HEX);
+          Serial.print("<");
+#endif
+          
+      
+      if ((ch == _u8MBSlave) || u8ModbusADUSize)
+        {
+        u8ModbusADU[u8ModbusADUSize++]=ch;
+        u8BytesLeft--;
+        }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
 #endif
@@ -753,13 +781,6 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     // evaluate slave ID, function code once enough bytes have been read
     if (u8ModbusADUSize == 5)
     {
-      // verify response is for correct Modbus slave
-      if (u8ModbusADU[0] != _u8MBSlave)
-      {
-        u8MBStatus = ku8MBInvalidSlaveID;
-        break;
-      }
-      
       // verify response is for correct Modbus function code (mask exception bit 7)
       if ((u8ModbusADU[1] & 0x7F) != u8MBFunction)
       {
