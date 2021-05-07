@@ -709,10 +709,26 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     _preTransmission();
   }
+
+  #ifdef MODBUS_DEBUG       
+  Serial.println();
+  #endif
+  
   for (i = 0; i < u8ModbusADUSize; i++)
   {
     _serial->write(u8ModbusADU[i]);
+    
+   #ifdef MODBUS_DEBUG       
+    if (u8ModbusADU[i]<10) Serial.print("0");    
+    Serial.print (u8ModbusADU[i],HEX);
+    Serial.print(">");
+   #endif
+    
   }
+  
+ #ifdef MODBUS_DEBUG       
+ Serial.println();
+ #endif
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
@@ -731,6 +747,14 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
       ch  = _serial->read();
+
+#ifdef MODBUS_DEBUG       
+          if (ch<10) Serial.print("0");
+          Serial.print (ch,HEX);
+          Serial.print("<");
+#endif
+          
+      
       if ((ch == _u8MBSlave) || u8ModbusADUSize)
         {
         u8ModbusADU[u8ModbusADUSize++]=ch;
