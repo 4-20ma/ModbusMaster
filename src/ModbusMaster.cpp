@@ -48,6 +48,10 @@ ModbusMaster::ModbusMaster(void)
   _postTransmission = 0;
 }
 
+#ifndef debugSerialPort
+#define debugSerialPort Serial
+#endif
+
 /**
 Initialize class object.
 
@@ -711,7 +715,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   }
 
   #ifdef MODBUS_DEBUG       
-  Serial.println();
+  debugSerialPort.println();
   #endif
   
   for (i = 0; i < u8ModbusADUSize; i++)
@@ -719,15 +723,15 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     _serial->write(u8ModbusADU[i]);
     
    #ifdef MODBUS_DEBUG       
-    if (u8ModbusADU[i]<10) Serial.print("0");    
-    Serial.print (u8ModbusADU[i],HEX);
-    Serial.print(">");
+    if (u8ModbusADU[i]<15) debugSerialPort.print("0");    
+    debugSerialPort.print (u8ModbusADU[i],HEX);
+    debugSerialPort.print(">");
    #endif
     
   }
   
  #ifdef MODBUS_DEBUG       
- Serial.println();
+ debugSerialPort.println();
  #endif
   
   u8ModbusADUSize = 0;
@@ -749,9 +753,9 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       ch  = _serial->read();
 
 #ifdef MODBUS_DEBUG       
-          if (ch<10) Serial.print("0");
-          Serial.print (ch,HEX);
-          Serial.print("<");
+          if (ch<15) debugSerialPort.print("0");
+          debugSerialPort.print (ch,HEX);
+          debugSerialPort.print("<");
 #endif
           
       
