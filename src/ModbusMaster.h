@@ -71,7 +71,7 @@ class ModbusMaster
   public:
     ModbusMaster();
    
-    void begin(uint8_t, Stream &serial);
+    void begin(uint8_t, Stream &serial, uint16_t u16MBResponseTimeout);
     void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
