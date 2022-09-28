@@ -71,7 +71,7 @@ class ModbusMaster
   public:
     ModbusMaster();
    
-    void begin(uint8_t, Stream &serial);
+    void begin(uint8_t, Stream &serial, uint16_t u16MBResponseTimeout);
     void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
@@ -219,6 +219,7 @@ class ModbusMaster
     
   private:
     Stream* _serial;                                             ///< reference to serial port object
+    uint16_t _u16MBResponseTimeout;                              ///< Modbus timeout [milliseconds]
     uint8_t  _u8MBSlave;                                         ///< Modbus slave (1..255) initialized in begin()
     static const uint8_t ku8MaxBufferSize                = 64;   ///< size of response/transmit buffers    
     uint16_t _u16ReadAddress;                                    ///< slave register from which to read
@@ -248,8 +249,8 @@ class ModbusMaster
     static const uint8_t ku8MBMaskWriteRegister          = 0x16; ///< Modbus function 0x16 Mask Write Register
     static const uint8_t ku8MBReadWriteMultipleRegisters = 0x17; ///< Modbus function 0x17 Read Write Multiple Registers
     
-    // Modbus timeout [milliseconds]
-    static const uint16_t ku16MBResponseTimeout          = 2000; ///< Modbus timeout [milliseconds]
+    // Default Modbus timeout [milliseconds]
+    static const uint16_t ku16MBResponseTimeout          = 2000; ///< Default Modbus timeout [milliseconds]
     
     // master function that conducts Modbus transactions
     uint8_t ModbusMasterTransaction(uint8_t u8MBFunction);

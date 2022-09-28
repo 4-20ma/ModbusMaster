@@ -56,13 +56,15 @@ Call once class has been instantiated, typically within setup().
 
 @param slave Modbus slave ID (1..255)
 @param &serial reference to serial port object (Serial, Serial1, ... Serial3)
+@param u16MBResponseTimeout Modbus timeout in milliseconds (default 2000)
 @ingroup setup
 */
-void ModbusMaster::begin(uint8_t slave, Stream &serial)
+void ModbusMaster::begin(uint8_t slave, Stream &serial, uint16_t u16MBResponseTimeout = ModbusMaster::ku16MBResponseTimeout)
 {
 //  txBuffer = (uint16_t*) calloc(ku8MaxBufferSize, sizeof(uint16_t));
   _u8MBSlave = slave;
   _serial = &serial;
+  _u16MBResponseTimeout = u16MBResponseTimeout;
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
   
@@ -797,7 +799,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if ((millis() - u32StartTime) > _u16MBResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }

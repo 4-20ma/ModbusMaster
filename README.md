@@ -105,8 +105,8 @@ void setup()
   // use Serial (port 0); initialize Modbus communication baud rate
   Serial.begin(19200);
 
-  // communicate with Modbus slave ID 2 over Serial (port 0)
-  node.begin(2, Serial);
+  // communicate with Modbus slave ID 2 over Serial (port 0), with a 1-second timeout
+  node.begin(2, Serial, 1000);
 }
 
 
