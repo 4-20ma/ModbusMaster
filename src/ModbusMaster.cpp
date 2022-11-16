@@ -697,8 +697,8 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
   }
-  u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
+  u8ModbusADU[u8ModbusADUSize++] = lowByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
 
   // flush receive buffer before transmitting request
