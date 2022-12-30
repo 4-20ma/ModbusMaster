@@ -216,6 +216,7 @@ class ModbusMaster
     uint8_t  maskWriteRegister(uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t);
+    uint8_t  ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8ModbusADUSize, uint8_t u8BytesLeft);
     
   private:
     Stream* _serial;                                             ///< reference to serial port object
