@@ -921,7 +921,7 @@ uint8_t ModbusMaster::ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8Modbus
   uint32_t u32StartTime;
 
   uint8_t u8MBStatus = ku8MBSuccess;
-
+  u8ModbusADU[0] = _u8MBSlave;
   // calculate CRC
   u16CRC = 0xFFFF;
   for (uint8_t i = 0; i < u8ModbusADUSize; i++)
