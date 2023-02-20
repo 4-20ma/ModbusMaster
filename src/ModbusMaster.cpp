@@ -47,6 +47,7 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _u16ResponseTimeout = ku16MBDefaultResponseTimeout;
 }
 
 /**
@@ -183,6 +184,7 @@ void ModbusMaster::postTransmission(void (*postTransmission)())
 Retrieve data from response buffer.
 
 @see ModbusMaster::clearResponseBuffer()
+@see ModbusMaster::getResponseSize()
 @param u8Index index of response buffer array (0x00..0x3F)
 @return value in position u8Index of response buffer (0x0000..0xFFFF)
 @ingroup buffer
@@ -199,6 +201,17 @@ uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
   }
 }
 
+/**
+Get number of words in response buffer.
+
+@see ModbusMaster::getResponseBuffer
+@return value in position u8Index of response buffer (0x0000..0xFFFF)
+@ingroup buffer
+ */
+uint8_t ModbusMaster::getResponseSize()
+{
+  return _u8ResponseBufferLength;
+}
 
 /**
 Clear Modbus response buffer.
@@ -252,6 +265,41 @@ void ModbusMaster::clearTransmitBuffer()
   {
     _u16TransmitBuffer[i] = 0;
   }
+}
+
+/**
+ * Set Modbus save id
+ * Change the slave id that is set with begin method.
+ * */
+void ModbusMaster::setSlaveId(uint8_t slaveid)
+{
+  _u8MBSlave = slaveid;
+}
+
+/**
+ * Get Modbus save id
+ * */
+uint8_t ModbusMaster::getSlaveId(void)
+{
+  return _u8MBSlave;
+}
+
+
+/**
+Get the response timeout.  Value is in ms.
+*/
+uint16_t ModbusMaster::getResponseTimeout()
+{
+   return _u16ResponseTimeout;
+}
+
+/**
+Sets the response timeout.  Value should be given in ms.
+The default is 2000 ms.
+*/
+void ModbusMaster::setResponseTimeout(uint16_t timeout)
+{
+  _u16ResponseTimeout = timeout;
 }
 
 
@@ -533,6 +581,18 @@ uint8_t ModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress,
   return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
 }
 
+/*
+ * ku8MBReadDeviceIdentifiers      = 0x2B/0E
+ */
+//uint8_t  ModbusMaster::readDeviceIdentifiers(uint8_t ObjectId)
+uint8_t ModbusMaster::readDeviceIdentifiers(uint8_t ReadId, uint8_t ObjectId, char *pu8ReadStrBuffer, uint8_t u8ReadStrBufferMaxSize, uint8_t *pu8ReadStrSize)
+{
+  _u16ReadAddress = ((uint16_t)ReadId << 8) | ObjectId;
+  _pu8ReadStrBuffer = pu8ReadStrBuffer;
+  _u8ReadStrBufferMaxSize = u8ReadStrBufferMaxSize;
+  _pu8ReadStrSize = pu8ReadStrSize;
+  return ModbusMasterTransaction(ku8MBReadDeviceIdentifiers);
+}
 
 /* _____PRIVATE FUNCTIONS____________________________________________________ */
 /**
@@ -553,6 +613,8 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   uint8_t u8ModbusADU[256];
   uint8_t u8ModbusADUSize = 0;
   uint8_t i, u8Qty;
+  uint8_t u8RDIobjcnt = 0;
+  uint8_t u8RDInextObjSzIdx = 255;
   uint16_t u16CRC;
   uint32_t u32StartTime;
   uint8_t u8BytesLeft = 8;
@@ -574,6 +636,14 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadQty);
       break;
+  case ku8MBReadDeviceIdentifiers:
+    //u8ModbusADUSize = 0;
+    //u8ModbusADU[u8ModbusADUSize++] = u8MBFunction;
+    u8ModbusADU[u8ModbusADUSize++] = 0x0E;                      // MEI type
+    u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadAddress); // ReadId code
+    u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadAddress);  // ObjectId code
+    u8BytesLeft = 12;
+    break;
   }
 
   switch(u8MBFunction)
@@ -730,7 +800,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     }
 
     // evaluate slave ID, function code once enough bytes have been read
-    if (u8ModbusADUSize == 5)
+    if ((u8ModbusADUSize == 5) && (u8ModbusADU[1] != ku8MBReadDeviceIdentifiers))
     {
       // verify response is for correct Modbus slave
       if (u8ModbusADU[0] != _u8MBSlave)
@@ -774,9 +844,27 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         case ku8MBMaskWriteRegister:
           u8BytesLeft = 5;
           break;
+        break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) // function 2B-0E
+    {
+      if ((u8ModbusADUSize == 8) && (u8RDIobjcnt == 0))
+      {
+        u8RDIobjcnt = u8ModbusADU[7];
+        u8BytesLeft = u8RDIobjcnt * 2 + 2;
+        u8RDInextObjSzIdx = u8ModbusADUSize + 2;
+      }
+      if ((u8ModbusADUSize == u8RDInextObjSzIdx) && (u8RDIobjcnt != 0))
+      {
+        u8BytesLeft += u8ModbusADU[u8ModbusADUSize - 1];
+        if (--u8RDIobjcnt != 0)
+        {
+          u8RDInextObjSzIdx += u8ModbusADU[u8ModbusADUSize - 1] + 2;
+        }
+      }
+    }
+    if ((millis() - u32StartTime) > _u16ResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
@@ -878,6 +966,30 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           _u8ResponseBufferLength = i;
         }
         break;
+    case ku8MBReadDeviceIdentifiers:
+      // The payload data of this function is a linked list of mostly ascii strings
+      // Here we concatenate the passed device ID strings, separated by spaces, and return to the caller.
+      u8RDIobjcnt = u8ModbusADU[7];
+      u8RDInextObjSzIdx = 7 + 2;
+      *_pu8ReadStrSize = 0;
+      _u8ResponseBufferIndex = 0;
+      for (i = 0; i < u8RDIobjcnt; i++)
+      {
+        int len = u8ModbusADU[u8RDInextObjSzIdx];
+        if ((len > 2) && (_u8ResponseBufferIndex + len < _u8ReadStrBufferMaxSize))
+        {
+          if (_u8ResponseBufferIndex > 0)
+          {
+            _pu8ReadStrBuffer[_u8ResponseBufferIndex++] = ' ';
+          }
+          memcpy(_pu8ReadStrBuffer + _u8ResponseBufferIndex, u8ModbusADU + u8RDInextObjSzIdx + 1, len);
+          _u8ResponseBufferIndex += len;
+          _pu8ReadStrBuffer[_u8ResponseBufferIndex] = 0;
+        }
+        u8RDInextObjSzIdx += len + 2;
+        *_pu8ReadStrSize = _u8ResponseBufferIndex;
+      }
+      break;
     }
   }
 

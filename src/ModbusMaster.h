@@ -232,9 +232,14 @@ class ModbusMaster
     static const uint8_t ku8MBInvalidCRC                 = 0xE3;
 
     uint16_t getResponseBuffer(uint8_t Index);
+    uint8_t getResponseSize(void);
     void clearResponseBuffer(void);
     uint8_t setTransmitBuffer(uint8_t Offset, uint16_t Value);
     void clearTransmitBuffer(void);
+    void setSlaveId(uint8_t slaveid);
+    uint8_t getSlaveId(void);
+    uint16_t getResponseTimeout(void);
+    void setResponseTimeout(uint16_t timeout_ms);
 
     void beginTransmission(uint16_t u16Address);
     //uint8_t requestFrom(uint16_t Addr, uint16_t Qty);
@@ -258,6 +263,8 @@ class ModbusMaster
     uint8_t maskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask, uint16_t u16OrMask);
     uint8_t readWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty);
     uint8_t readWriteMultipleRegisters(uint16_t Addr, uint16_t Qty);
+    //uint8_t  readDeviceIdentifiers(uint8_t ReadId, uint8_t ObjectId);
+    uint8_t readDeviceIdentifiers(uint8_t ReadId, uint8_t ObjectId, char *pu8ReadStrBuffer, uint8_t u8ReadStrBufferMaxSize, uint8_t *pu8ReadStrSize);
 
   private:
     Stream* _serial;                                             ///< reference to serial port object
@@ -273,6 +280,10 @@ class ModbusMaster
     uint16_t u16TransmitBufferLength;
     uint8_t _u8ResponseBufferIndex;
     uint8_t _u8ResponseBufferLength;
+    char *_pu8ReadStrBuffer;
+    uint8_t _u8ReadStrBufferMaxSize;
+    uint8_t *_pu8ReadStrSize;
+    uint16_t _u16ResponseTimeout;
 
     // Modbus function codes for bit access
     static const uint8_t ku8MBReadCoils                  = 0x01; ///< Modbus function 0x01 Read Coils
@@ -288,8 +299,10 @@ class ModbusMaster
     static const uint8_t ku8MBMaskWriteRegister          = 0x16; ///< Modbus function 0x16 Mask Write Register
     static const uint8_t ku8MBReadWriteMultipleRegisters = 0x17; ///< Modbus function 0x17 Read Write Multiple Registers
 
+    static const uint8_t ku8MBReadDeviceIdentifiers = 0x2B;      ///< Modbus function 0x2B/0E Read DeviceIdentifiers
+
     // Modbus timeout [milliseconds]
-    static const uint16_t ku16MBResponseTimeout          = 2000; ///< Modbus timeout [milliseconds]
+    static const uint16_t ku16MBDefaultResponseTimeout   = 2000; ///< Modbus timeout [milliseconds]
 
     // master function that conducts Modbus transactions
     uint8_t ModbusMasterTransaction(uint8_t u8MBFunction);
