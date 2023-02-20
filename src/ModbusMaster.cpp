@@ -27,6 +27,7 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
 //uncomment for DEBUG
 //#define DEBUG_SEND_MESSAGE
 //#define DEBUG_RECEIVED_MESSAGE
+//#define DebugSerial  Serial
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 #include "ModbusMaster.h"
@@ -77,22 +78,6 @@ void ModbusMaster::beginTransmission(uint16_t u16Address)
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
 }
-
-// eliminate this function in favor of using existing MB request functions
-//uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
-//{
-//  uint8_t read;
-//  // clamp to buffer length
-//  if (quantity > ku8MaxBufferSize)
-//  {
-//    quantity = ku8MaxBufferSize;
-//  }
-//  // set rx buffer iterator vars
-//  _u8ResponseBufferIndex = 0;
-//  _u8ResponseBufferLength = read;
-//
-//  return read;
-//}
 
 void ModbusMaster::sendBit(bool data)
 {
@@ -667,9 +652,37 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
 
+  //DEBUG:dump TX message
+#ifdef DEBUG_SEND_MESSAGE
+  if (_serial->available())
+  {
+    DebugSerial.print(F("\nFlushRd: "));
   // flush receive buffer before transmitting request
-  while (_serial->read() != -1);
+    do
+    {
+      int rc = _serial->read();
+      if (rc == -1) break;
+      i = rc;
+      if (i < 0x10) DebugSerial.print('0');
+      DebugSerial.print((uint8_t)i, HEX);
+      DebugSerial.print(' ');
+    } while (1);
+    DebugSerial.println();
+  }
+  DebugSerial.print(F("Sending:  "));
+  for (i = 0; i < u8ModbusADUSize; i++)
+  {
+    if (u8ModbusADU[i] < 0x10) DebugSerial.print('0');
+    DebugSerial.print(u8ModbusADU[i], HEX);
+    DebugSerial.print(' ');
+  }
+  DebugSerial.println();
+#else
 
+  // flush receive buffer before transmitting request
+  while (_serial->read() != -1)
+    ;
+#endif
   // transmit request
   if (_preTransmission)
   {
@@ -768,6 +781,39 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       u8MBStatus = ku8MBResponseTimedOut;
     }
   }
+  //DEBUG:dump RX message
+#ifdef DEBUG_RECEIVED_MESSAGE
+  DebugSerial.print("Received: ");
+  for (i = 0; i < u8ModbusADUSize; i++)
+  {
+    if (u8ModbusADU[i] < 0x10) DebugSerial.print('0');
+    DebugSerial.print(u8ModbusADU[i], HEX);
+    DebugSerial.print(' ');
+  }
+  DebugSerial.println();
+  bool blprintstr = false;
+  i = (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) ? 10 : 3;
+  for (; i < u8ModbusADUSize; i++)
+  {
+    if ((u8ModbusADU[i] >= ' ') && (u8ModbusADU[i] <= 'z'))
+    {
+      if (!blprintstr)
+      {
+        blprintstr = true;
+        DebugSerial.print(" \"");
+      }
+      DebugSerial.print((char)u8ModbusADU[i]);
+    }
+    else if (blprintstr)
+    {
+      blprintstr = false;
+      DebugSerial.print("\",");
+    }
+  }
+  DebugSerial.println();
+  DebugSerial.print("Status:");
+  DebugSerial.println(u8MBStatus, HEX);
+#endif
 
   // verify response is large enough to inspect further
   if (!u8MBStatus && u8ModbusADUSize >= 5)
