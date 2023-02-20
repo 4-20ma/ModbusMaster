@@ -24,7 +24,9 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
   limitations under the License.
 
 */
-
+//uncomment for DEBUG
+//#define DEBUG_SEND_MESSAGE
+//#define DEBUG_RECEIVED_MESSAGE
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 #include "ModbusMaster.h"
@@ -58,7 +60,6 @@ Call once class has been instantiated, typically within setup().
 */
 void ModbusMaster::begin(uint8_t slave, Stream &serial)
 {
-//  txBuffer = (uint16_t*) calloc(ku8MaxBufferSize, sizeof(uint16_t));
   _u8MBSlave = slave;
   _serial = &serial;
   _u8TransmitBufferIndex = 0;
@@ -78,20 +79,20 @@ void ModbusMaster::beginTransmission(uint16_t u16Address)
 }
 
 // eliminate this function in favor of using existing MB request functions
-uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
-{
-  uint8_t read;
-  // clamp to buffer length
-  if (quantity > ku8MaxBufferSize)
-  {
-    quantity = ku8MaxBufferSize;
-  }
-  // set rx buffer iterator vars
-  _u8ResponseBufferIndex = 0;
-  _u8ResponseBufferLength = read;
-
-  return read;
-}
+//uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
+//{
+//  uint8_t read;
+//  // clamp to buffer length
+//  if (quantity > ku8MaxBufferSize)
+//  {
+//    quantity = ku8MaxBufferSize;
+//  }
+//  // set rx buffer iterator vars
+//  _u8ResponseBufferIndex = 0;
+//  _u8ResponseBufferLength = read;
+//
+//  return read;
+//}
 
 void ModbusMaster::sendBit(bool data)
 {
@@ -371,7 +372,7 @@ register.
 @ingroup register
 */
 uint8_t ModbusMaster::readInputRegisters(uint16_t u16ReadAddress,
-  uint8_t u16ReadQty)
+  uint16_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
