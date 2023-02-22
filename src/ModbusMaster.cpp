@@ -205,7 +205,7 @@ uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
 Get number of words in response buffer.
 
 @see ModbusMaster::getResponseBuffer
-@return value in position u8Index of response buffer (0x0000..0xFFFF)
+@return number of words in response buffer
 @ingroup buffer
  */
 uint8_t ModbusMaster::getResponseSize()
@@ -880,8 +880,9 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   }
   DebugSerial.println();
   bool blprintstr = false;
-  i = (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) ? 10 : 3;
-  for (; i < u8ModbusADUSize; i++)
+  if (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) {
+  /* ASCII translation of payload */
+  for (i = 10; i < u8ModbusADUSize; i++)
   {
     if ((u8ModbusADU[i] >= ' ') && (u8ModbusADU[i] <= 'z'))
     {
@@ -899,6 +900,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     }
   }
   DebugSerial.println();
+  }
   DebugSerial.print("Status:");
   DebugSerial.println(u8MBStatus, HEX);
 #endif
@@ -930,24 +932,16 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       case ku8MBReadCoils:
       case ku8MBReadDiscreteInputs:
         // load bytes into word; response bytes are ordered L, H, L, H, ...
-        for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
+        for (i = 0; (i < (u8ModbusADU[2] >> 1)) && (i < ku8MaxBufferSize); i++)
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
-          }
-
-          _u8ResponseBufferLength = i;
+          _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
         }
+        _u8ResponseBufferLength = i;
 
         // in the event of an odd number of bytes, load last byte into zero-padded word
-        if (u8ModbusADU[2] % 2)
+        if ((u8ModbusADU[2] % 2) && (i < ku8MaxBufferSize))
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(0, u8ModbusADU[2 * i + 3]);
-          }
-
+          _u16ResponseBuffer[i] = word(0, u8ModbusADU[2 * i + 3]);
           _u8ResponseBufferLength = i + 1;
         }
         break;
@@ -956,15 +950,11 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       case ku8MBReadHoldingRegisters:
       case ku8MBReadWriteMultipleRegisters:
         // load bytes into word; response bytes are ordered H, L, H, L, ...
-        for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
+        for (i = 0; (i < (u8ModbusADU[2] >> 1)) && (i < ku8MaxBufferSize); i++)
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
-          }
-
-          _u8ResponseBufferLength = i;
+          _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
         }
+        _u8ResponseBufferLength = i;
         break;
     case ku8MBReadDeviceIdentifiers:
       // The payload data of this function is a linked list of mostly ascii strings
