@@ -33,6 +33,7 @@ writeMultipleCoils	KEYWORD2
 writeMultipleRegisters	KEYWORD2
 maskWriteRegister	KEYWORD2
 readWriteMultipleRegisters	KEYWORD2
+readDeviceIdentifiers	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

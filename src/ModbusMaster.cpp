@@ -24,14 +24,15 @@ Arduino library for communicating with Modbus slaves over RS232/485 (via RTU pro
   limitations under the License.
 
 */
-
+//uncomment for DEBUG
+//#define DEBUG_SEND_MESSAGE
+//#define DEBUG_RECEIVED_MESSAGE
+//#define DebugSerial  Serial
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 #include "ModbusMaster.h"
 
-
 /* _____GLOBAL VARIABLES_____________________________________________________ */
-
 
 /* _____PUBLIC FUNCTIONS_____________________________________________________ */
 /**
@@ -46,6 +47,7 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _u16ResponseTimeout = ku16MBDefaultResponseTimeout;
 }
 
 /**
@@ -60,18 +62,16 @@ Call once class has been instantiated, typically within setup().
 */
 void ModbusMaster::begin(uint8_t slave, Stream &serial)
 {
-//  txBuffer = (uint16_t*) calloc(ku8MaxBufferSize, sizeof(uint16_t));
   _u8MBSlave = slave;
   _serial = &serial;
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
-  
+
 #if __MODBUSMASTER_DEBUG__
   pinMode(__MODBUSMASTER_DEBUG_PIN_A__, OUTPUT);
   pinMode(__MODBUSMASTER_DEBUG_PIN_B__, OUTPUT);
 #endif
 }
-
 
 void ModbusMaster::beginTransmission(uint16_t u16Address)
 {
@@ -79,23 +79,6 @@ void ModbusMaster::beginTransmission(uint16_t u16Address)
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
 }
-
-// eliminate this function in favor of using existing MB request functions
-uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
-{
-  uint8_t read;
-  // clamp to buffer length
-  if (quantity > ku8MaxBufferSize)
-  {
-    quantity = ku8MaxBufferSize;
-  }
-  // set rx buffer iterator vars
-  _u8ResponseBufferIndex = 0;
-  _u8ResponseBufferLength = read;
-
-  return read;
-}
-
 
 void ModbusMaster::sendBit(bool data)
 {
@@ -112,7 +95,6 @@ void ModbusMaster::sendBit(bool data)
   }
 }
 
-
 void ModbusMaster::send(uint16_t data)
 {
   if (_u8TransmitBufferIndex < ku8MaxBufferSize)
@@ -122,32 +104,21 @@ void ModbusMaster::send(uint16_t data)
   }
 }
 
-
 void ModbusMaster::send(uint32_t data)
 {
   send(lowWord(data));
   send(highWord(data));
 }
 
-
 void ModbusMaster::send(uint8_t data)
 {
   send(word(data));
 }
 
-
-
-
-
-
-
-
-
 uint8_t ModbusMaster::available(void)
 {
   return _u8ResponseBufferLength - _u8ResponseBufferIndex;
 }
-
 
 uint16_t ModbusMaster::receive(void)
 {
@@ -160,13 +131,6 @@ uint16_t ModbusMaster::receive(void)
     return 0xFFFF;
   }
 }
-
-
-
-
-
-
-
 
 /**
 Set idle time callback function (cooperative multitasking).
@@ -216,11 +180,11 @@ void ModbusMaster::postTransmission(void (*postTransmission)())
   _postTransmission = postTransmission;
 }
 
-
 /**
 Retrieve data from response buffer.
 
 @see ModbusMaster::clearResponseBuffer()
+@see ModbusMaster::getResponseSize()
 @param u8Index index of response buffer array (0x00..0x3F)
 @return value in position u8Index of response buffer (0x0000..0xFFFF)
 @ingroup buffer
@@ -237,6 +201,17 @@ uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
   }
 }
 
+/**
+Get number of words in response buffer.
+
+@see ModbusMaster::getResponseBuffer
+@return number of words in response buffer
+@ingroup buffer
+ */
+uint8_t ModbusMaster::getResponseSize()
+{
+  return _u8ResponseBufferLength;
+}
 
 /**
 Clear Modbus response buffer.
@@ -247,13 +222,12 @@ Clear Modbus response buffer.
 void ModbusMaster::clearResponseBuffer()
 {
   uint8_t i;
-  
+
   for (i = 0; i < ku8MaxBufferSize; i++)
   {
     _u16ResponseBuffer[i] = 0;
   }
 }
-
 
 /**
 Place data in transmit buffer.
@@ -277,7 +251,6 @@ uint8_t ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
   }
 }
 
-
 /**
 Clear Modbus transmit buffer.
 
@@ -287,30 +260,65 @@ Clear Modbus transmit buffer.
 void ModbusMaster::clearTransmitBuffer()
 {
   uint8_t i;
-  
+
   for (i = 0; i < ku8MaxBufferSize; i++)
   {
     _u16TransmitBuffer[i] = 0;
   }
 }
 
+/**
+ * Set Modbus save id
+ * Change the slave id that is set with begin method.
+ * */
+void ModbusMaster::setSlaveId(uint8_t slaveid)
+{
+  _u8MBSlave = slaveid;
+}
+
+/**
+ * Get Modbus save id
+ * */
+uint8_t ModbusMaster::getSlaveId(void)
+{
+  return _u8MBSlave;
+}
+
+
+/**
+Get the response timeout.  Value is in ms.
+*/
+uint16_t ModbusMaster::getResponseTimeout()
+{
+   return _u16ResponseTimeout;
+}
+
+/**
+Sets the response timeout.  Value should be given in ms.
+The default is 2000 ms.
+*/
+void ModbusMaster::setResponseTimeout(uint16_t timeout)
+{
+  _u16ResponseTimeout = timeout;
+}
+
 
 /**
 Modbus function 0x01 Read Coils.
 
-This function code is used to read from 1 to 2000 contiguous status of 
-coils in a remote device. The request specifies the starting address, 
-i.e. the address of the first coil specified, and the number of coils. 
+This function code is used to read from 1 to 2000 contiguous status of
+coils in a remote device. The request specifies the starting address,
+i.e. the address of the first coil specified, and the number of coils.
 Coils are addressed starting at zero.
 
-The coils in the response buffer are packed as one coil per bit of the 
-data field. Status is indicated as 1=ON and 0=OFF. The LSB of the first 
-data word contains the output addressed in the query. The other coils 
-follow toward the high order end of this word and from low order to high 
+The coils in the response buffer are packed as one coil per bit of the
+data field. Status is indicated as 1=ON and 0=OFF. The LSB of the first
+data word contains the output addressed in the query. The other coils
+follow toward the high order end of this word and from low order to high
 order in subsequent words.
 
-If the returned quantity is not a multiple of sixteen, the remaining 
-bits in the final data word will be padded with zeros (toward the high 
+If the returned quantity is not a multiple of sixteen, the remaining
+bits in the final data word will be padded with zeros (toward the high
 order end of the word).
 
 @param u16ReadAddress address of first coil (0x0000..0xFFFF)
@@ -325,23 +333,22 @@ uint8_t ModbusMaster::readCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
   return ModbusMasterTransaction(ku8MBReadCoils);
 }
 
-
 /**
 Modbus function 0x02 Read Discrete Inputs.
 
-This function code is used to read from 1 to 2000 contiguous status of 
-discrete inputs in a remote device. The request specifies the starting 
-address, i.e. the address of the first input specified, and the number 
+This function code is used to read from 1 to 2000 contiguous status of
+discrete inputs in a remote device. The request specifies the starting
+address, i.e. the address of the first input specified, and the number
 of inputs. Discrete inputs are addressed starting at zero.
 
-The discrete inputs in the response buffer are packed as one input per 
-bit of the data field. Status is indicated as 1=ON; 0=OFF. The LSB of 
-the first data word contains the input addressed in the query. The other 
-inputs follow toward the high order end of this word, and from low order 
+The discrete inputs in the response buffer are packed as one input per
+bit of the data field. Status is indicated as 1=ON; 0=OFF. The LSB of
+the first data word contains the input addressed in the query. The other
+inputs follow toward the high order end of this word, and from low order
 to high order in subsequent words.
 
-If the returned quantity is not a multiple of sixteen, the remaining 
-bits in the final data word will be padded with zeros (toward the high 
+If the returned quantity is not a multiple of sixteen, the remaining
+bits in the final data word will be padded with zeros (toward the high
 order end of the word).
 
 @param u16ReadAddress address of first discrete input (0x0000..0xFFFF)
@@ -357,16 +364,15 @@ uint8_t ModbusMaster::readDiscreteInputs(uint16_t u16ReadAddress,
   return ModbusMasterTransaction(ku8MBReadDiscreteInputs);
 }
 
-
 /**
 Modbus function 0x03 Read Holding Registers.
 
-This function code is used to read the contents of a contiguous block of 
-holding registers in a remote device. The request specifies the starting 
-register address and the number of registers. Registers are addressed 
+This function code is used to read the contents of a contiguous block of
+holding registers in a remote device. The request specifies the starting
+register address and the number of registers. Registers are addressed
 starting at zero.
 
-The register data in the response buffer is packed as one word per 
+The register data in the response buffer is packed as one word per
 register.
 
 @param u16ReadAddress address of the first holding register (0x0000..0xFFFF)
@@ -382,16 +388,15 @@ uint8_t ModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress,
   return ModbusMasterTransaction(ku8MBReadHoldingRegisters);
 }
 
-
 /**
 Modbus function 0x04 Read Input Registers.
 
-This function code is used to read from 1 to 125 contiguous input 
-registers in a remote device. The request specifies the starting 
-register address and the number of registers. Registers are addressed 
+This function code is used to read from 1 to 125 contiguous input
+registers in a remote device. The request specifies the starting
+register address and the number of registers. Registers are addressed
 starting at zero.
 
-The register data in the response buffer is packed as one word per 
+The register data in the response buffer is packed as one word per
 register.
 
 @param u16ReadAddress address of the first input register (0x0000..0xFFFF)
@@ -400,21 +405,20 @@ register.
 @ingroup register
 */
 uint8_t ModbusMaster::readInputRegisters(uint16_t u16ReadAddress,
-  uint8_t u16ReadQty)
+  uint16_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
   return ModbusMasterTransaction(ku8MBReadInputRegisters);
 }
 
-
 /**
 Modbus function 0x05 Write Single Coil.
 
-This function code is used to write a single output to either ON or OFF 
-in a remote device. The requested ON/OFF state is specified by a 
-constant in the state field. A non-zero value requests the output to be 
-ON and a value of 0 requests it to be OFF. The request specifies the 
+This function code is used to write a single output to either ON or OFF
+in a remote device. The requested ON/OFF state is specified by a
+constant in the state field. A non-zero value requests the output to be
+ON and a value of 0 requests it to be OFF. The request specifies the
 address of the coil to be forced. Coils are addressed starting at zero.
 
 @param u16WriteAddress address of the coil (0x0000..0xFFFF)
@@ -429,12 +433,11 @@ uint8_t ModbusMaster::writeSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
   return ModbusMasterTransaction(ku8MBWriteSingleCoil);
 }
 
-
 /**
 Modbus function 0x06 Write Single Register.
 
-This function code is used to write a single holding register in a 
-remote device. The request specifies the address of the register to be 
+This function code is used to write a single holding register in a
+remote device. The request specifies the address of the register to be
 written. Registers are addressed starting at zero.
 
 @param u16WriteAddress address of the holding register (0x0000..0xFFFF)
@@ -451,16 +454,15 @@ uint8_t ModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
   return ModbusMasterTransaction(ku8MBWriteSingleRegister);
 }
 
-
 /**
 Modbus function 0x0F Write Multiple Coils.
 
-This function code is used to force each coil in a sequence of coils to 
-either ON or OFF in a remote device. The request specifies the coil 
+This function code is used to force each coil in a sequence of coils to
+either ON or OFF in a remote device. The request specifies the coil
 references to be forced. Coils are addressed starting at zero.
 
-The requested ON/OFF states are specified by contents of the transmit 
-buffer. A logical '1' in a bit position of the buffer requests the 
+The requested ON/OFF states are specified by contents of the transmit
+buffer. A logical '1' in a bit position of the buffer requests the
 corresponding output to be ON. A logical '0' requests it to be OFF.
 
 @param u16WriteAddress address of the first coil (0x0000..0xFFFF)
@@ -481,14 +483,13 @@ uint8_t ModbusMaster::writeMultipleCoils()
   return ModbusMasterTransaction(ku8MBWriteMultipleCoils);
 }
 
-
 /**
 Modbus function 0x10 Write Multiple Registers.
 
-This function code is used to write a block of contiguous registers (1 
+This function code is used to write a block of contiguous registers (1
 to 123 registers) in a remote device.
 
-The requested written values are specified in the transmit buffer. Data 
+The requested written values are specified in the transmit buffer. Data
 is packed as one word per register.
 
 @param u16WriteAddress address of the holding register (0x0000..0xFFFF)
@@ -511,17 +512,16 @@ uint8_t ModbusMaster::writeMultipleRegisters()
   return ModbusMasterTransaction(ku8MBWriteMultipleRegisters);
 }
 
-
 /**
 Modbus function 0x16 Mask Write Register.
 
-This function code is used to modify the contents of a specified holding 
-register using a combination of an AND mask, an OR mask, and the 
-register's current contents. The function can be used to set or clear 
+This function code is used to modify the contents of a specified holding
+register using a combination of an AND mask, an OR mask, and the
+register's current contents. The function can be used to set or clear
 individual bits in the register.
 
-The request specifies the holding register to be written, the data to be 
-used as the AND mask, and the data to be used as the OR mask. Registers 
+The request specifies the holding register to be written, the data to be
+used as the AND mask, and the data to be used as the OR mask. Registers
 are addressed starting at zero.
 
 The function's algorithm is:
@@ -543,18 +543,17 @@ uint8_t ModbusMaster::maskWriteRegister(uint16_t u16WriteAddress,
   return ModbusMasterTransaction(ku8MBMaskWriteRegister);
 }
 
-
 /**
 Modbus function 0x17 Read Write Multiple Registers.
 
-This function code performs a combination of one read operation and one 
-write operation in a single MODBUS transaction. The write operation is 
-performed before the read. Holding registers are addressed starting at 
+This function code performs a combination of one read operation and one
+write operation in a single MODBUS transaction. The write operation is
+performed before the read. Holding registers are addressed starting at
 zero.
 
-The request specifies the starting address and number of holding 
-registers to be read as well as the starting address, and the number of 
-holding registers. The data to be written is specified in the transmit 
+The request specifies the starting address and number of holding
+registers to be read as well as the starting address, and the number of
+holding registers. The data to be written is specified in the transmit
 buffer.
 
 @param u16ReadAddress address of the first holding register (0x0000..0xFFFF)
@@ -582,6 +581,18 @@ uint8_t ModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress,
   return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
 }
 
+/*
+ * ku8MBReadDeviceIdentifiers      = 0x2B/0E
+ */
+//uint8_t  ModbusMaster::readDeviceIdentifiers(uint8_t ObjectId)
+uint8_t ModbusMaster::readDeviceIdentifiers(uint8_t ReadId, uint8_t ObjectId, char *pu8ReadStrBuffer, uint8_t u8ReadStrBufferMaxSize, uint8_t *pu8ReadStrSize)
+{
+  _u16ReadAddress = ((uint16_t)ReadId << 8) | ObjectId;
+  _pu8ReadStrBuffer = pu8ReadStrBuffer;
+  _u8ReadStrBufferMaxSize = u8ReadStrBufferMaxSize;
+  _pu8ReadStrSize = pu8ReadStrSize;
+  return ModbusMasterTransaction(ku8MBReadDeviceIdentifiers);
+}
 
 /* _____PRIVATE FUNCTIONS____________________________________________________ */
 /**
@@ -602,15 +613,17 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   uint8_t u8ModbusADU[256];
   uint8_t u8ModbusADUSize = 0;
   uint8_t i, u8Qty;
+  uint8_t u8RDIobjcnt = 0;
+  uint8_t u8RDInextObjSzIdx = 255;
   uint16_t u16CRC;
   uint32_t u32StartTime;
   uint8_t u8BytesLeft = 8;
   uint8_t u8MBStatus = ku8MBSuccess;
-  
+
   // assemble Modbus Request Application Data Unit
   u8ModbusADU[u8ModbusADUSize++] = _u8MBSlave;
   u8ModbusADU[u8ModbusADUSize++] = u8MBFunction;
-  
+
   switch(u8MBFunction)
   {
     case ku8MBReadCoils:
@@ -623,8 +636,16 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadQty);
       break;
+  case ku8MBReadDeviceIdentifiers:
+    //u8ModbusADUSize = 0;
+    //u8ModbusADU[u8ModbusADUSize++] = u8MBFunction;
+    u8ModbusADU[u8ModbusADUSize++] = 0x0E;                      // MEI type
+    u8ModbusADU[u8ModbusADUSize++] = highByte(_u16ReadAddress); // ReadId code
+    u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16ReadAddress);  // ObjectId code
+    u8BytesLeft = 12;
+    break;
   }
-  
+
   switch(u8MBFunction)
   {
     case ku8MBWriteSingleCoil:
@@ -637,19 +658,19 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteAddress);
       break;
   }
-  
+
   switch(u8MBFunction)
   {
     case ku8MBWriteSingleCoil:
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
       break;
-      
+
     case ku8MBWriteSingleRegister:
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16TransmitBuffer[0]);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16TransmitBuffer[0]);
       break;
-      
+
     case ku8MBWriteMultipleCoils:
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
@@ -662,27 +683,27 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           case 0: // i is even
             u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16TransmitBuffer[i >> 1]);
             break;
-            
+
           case 1: // i is odd
             u8ModbusADU[u8ModbusADUSize++] = highByte(_u16TransmitBuffer[i >> 1]);
             break;
         }
       }
       break;
-      
+
     case ku8MBWriteMultipleRegisters:
     case ku8MBReadWriteMultipleRegisters:
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16WriteQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16WriteQty << 1);
-      
+
       for (i = 0; i < lowByte(_u16WriteQty); i++)
       {
         u8ModbusADU[u8ModbusADUSize++] = highByte(_u16TransmitBuffer[i]);
         u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16TransmitBuffer[i]);
       }
       break;
-      
+
     case ku8MBMaskWriteRegister:
       u8ModbusADU[u8ModbusADUSize++] = highByte(_u16TransmitBuffer[0]);
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16TransmitBuffer[0]);
@@ -690,7 +711,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       u8ModbusADU[u8ModbusADUSize++] = lowByte(_u16TransmitBuffer[1]);
       break;
   }
-  
+
   // append CRC
   u16CRC = 0xFFFF;
   for (i = 0; i < u8ModbusADUSize; i++)
@@ -701,9 +722,37 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[u8ModbusADUSize++] = highByte(u16CRC);
   u8ModbusADU[u8ModbusADUSize] = 0;
 
+  //DEBUG:dump TX message
+#ifdef DEBUG_SEND_MESSAGE
+  if (_serial->available())
+  {
+    DebugSerial.print(F("\nFlushRd: "));
   // flush receive buffer before transmitting request
-  while (_serial->read() != -1);
+    do
+    {
+      int rc = _serial->read();
+      if (rc == -1) break;
+      i = rc;
+      if (i < 0x10) DebugSerial.print('0');
+      DebugSerial.print((uint8_t)i, HEX);
+      DebugSerial.print(' ');
+    } while (1);
+    DebugSerial.println();
+  }
+  DebugSerial.print(F("Sending:  "));
+  for (i = 0; i < u8ModbusADUSize; i++)
+  {
+    if (u8ModbusADU[i] < 0x10) DebugSerial.print('0');
+    DebugSerial.print(u8ModbusADU[i], HEX);
+    DebugSerial.print(' ');
+  }
+  DebugSerial.println();
+#else
 
+  // flush receive buffer before transmitting request
+  while (_serial->read() != -1)
+    ;
+#endif
   // transmit request
   if (_preTransmission)
   {
@@ -713,14 +762,14 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     _serial->write(u8ModbusADU[i]);
   }
-  
+
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
   if (_postTransmission)
   {
     _postTransmission();
   }
-  
+
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();
   while (u8BytesLeft && !u8MBStatus)
@@ -749,9 +798,9 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, false);
 #endif
     }
-    
+
     // evaluate slave ID, function code once enough bytes have been read
-    if (u8ModbusADUSize == 5)
+    if ((u8ModbusADUSize == 5) && (u8ModbusADU[1] != ku8MBReadDeviceIdentifiers))
     {
       // verify response is for correct Modbus slave
       if (u8ModbusADU[0] != _u8MBSlave)
@@ -759,21 +808,21 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         u8MBStatus = ku8MBInvalidSlaveID;
         break;
       }
-      
+
       // verify response is for correct Modbus function code (mask exception bit 7)
       if ((u8ModbusADU[1] & 0x7F) != u8MBFunction)
       {
         u8MBStatus = ku8MBInvalidFunction;
         break;
       }
-      
+
       // check whether Modbus exception occurred; return Modbus Exception Code
       if (bitRead(u8ModbusADU[1], 7))
       {
         u8MBStatus = u8ModbusADU[2];
         break;
       }
-      
+
       // evaluate returned Modbus function code
       switch(u8ModbusADU[1])
       {
@@ -784,25 +833,78 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
         case ku8MBReadWriteMultipleRegisters:
           u8BytesLeft = u8ModbusADU[2];
           break;
-          
+
         case ku8MBWriteSingleCoil:
         case ku8MBWriteMultipleCoils:
         case ku8MBWriteSingleRegister:
         case ku8MBWriteMultipleRegisters:
           u8BytesLeft = 3;
           break;
-          
+
         case ku8MBMaskWriteRegister:
           u8BytesLeft = 5;
           break;
+        break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) // function 2B-0E
+    {
+      if ((u8ModbusADUSize == 8) && (u8RDIobjcnt == 0))
+      {
+        u8RDIobjcnt = u8ModbusADU[7];
+        u8BytesLeft = u8RDIobjcnt * 2 + 2;
+        u8RDInextObjSzIdx = u8ModbusADUSize + 2;
+      }
+      if ((u8ModbusADUSize == u8RDInextObjSzIdx) && (u8RDIobjcnt != 0))
+      {
+        u8BytesLeft += u8ModbusADU[u8ModbusADUSize - 1];
+        if (--u8RDIobjcnt != 0)
+        {
+          u8RDInextObjSzIdx += u8ModbusADU[u8ModbusADUSize - 1] + 2;
+        }
+      }
+    }
+    if ((millis() - u32StartTime) > _u16ResponseTimeout)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
   }
-  
+  //DEBUG:dump RX message
+#ifdef DEBUG_RECEIVED_MESSAGE
+  DebugSerial.print("Received: ");
+  for (i = 0; i < u8ModbusADUSize; i++)
+  {
+    if (u8ModbusADU[i] < 0x10) DebugSerial.print('0');
+    DebugSerial.print(u8ModbusADU[i], HEX);
+    DebugSerial.print(' ');
+  }
+  DebugSerial.println();
+  bool blprintstr = false;
+  if (u8ModbusADU[1] == ku8MBReadDeviceIdentifiers) {
+  /* ASCII translation of payload */
+  for (i = 10; i < u8ModbusADUSize; i++)
+  {
+    if ((u8ModbusADU[i] >= ' ') && (u8ModbusADU[i] <= 'z'))
+    {
+      if (!blprintstr)
+      {
+        blprintstr = true;
+        DebugSerial.print(" \"");
+      }
+      DebugSerial.print((char)u8ModbusADU[i]);
+    }
+    else if (blprintstr)
+    {
+      blprintstr = false;
+      DebugSerial.print("\",");
+    }
+  }
+  DebugSerial.println();
+  }
+  DebugSerial.print("Status:");
+  DebugSerial.println(u8MBStatus, HEX);
+#endif
+
   // verify response is large enough to inspect further
   if (!u8MBStatus && u8ModbusADUSize >= 5)
   {
@@ -812,7 +914,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     {
       u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
     }
-    
+
     // verify CRC
     if (!u8MBStatus && (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||
       highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))
@@ -830,45 +932,57 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       case ku8MBReadCoils:
       case ku8MBReadDiscreteInputs:
         // load bytes into word; response bytes are ordered L, H, L, H, ...
-        for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
+        for (i = 0; (i < (u8ModbusADU[2] >> 1)) && (i < ku8MaxBufferSize); i++)
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
-          }
-          
-          _u8ResponseBufferLength = i;
+          _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 4], u8ModbusADU[2 * i + 3]);
         }
-        
+        _u8ResponseBufferLength = i;
+
         // in the event of an odd number of bytes, load last byte into zero-padded word
-        if (u8ModbusADU[2] % 2)
+        if ((u8ModbusADU[2] % 2) && (i < ku8MaxBufferSize))
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(0, u8ModbusADU[2 * i + 3]);
-          }
-          
+          _u16ResponseBuffer[i] = word(0, u8ModbusADU[2 * i + 3]);
           _u8ResponseBufferLength = i + 1;
         }
         break;
-        
+
       case ku8MBReadInputRegisters:
       case ku8MBReadHoldingRegisters:
       case ku8MBReadWriteMultipleRegisters:
         // load bytes into word; response bytes are ordered H, L, H, L, ...
-        for (i = 0; i < (u8ModbusADU[2] >> 1); i++)
+        for (i = 0; (i < (u8ModbusADU[2] >> 1)) && (i < ku8MaxBufferSize); i++)
         {
-          if (i < ku8MaxBufferSize)
-          {
-            _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
-          }
-          
-          _u8ResponseBufferLength = i;
+          _u16ResponseBuffer[i] = word(u8ModbusADU[2 * i + 3], u8ModbusADU[2 * i + 4]);
         }
+        _u8ResponseBufferLength = i;
         break;
+    case ku8MBReadDeviceIdentifiers:
+      // The payload data of this function is a linked list of mostly ascii strings
+      // Here we concatenate the passed device ID strings, separated by spaces, and return to the caller.
+      u8RDIobjcnt = u8ModbusADU[7];
+      u8RDInextObjSzIdx = 7 + 2;
+      *_pu8ReadStrSize = 0;
+      _u8ResponseBufferIndex = 0;
+      for (i = 0; i < u8RDIobjcnt; i++)
+      {
+        int len = u8ModbusADU[u8RDInextObjSzIdx];
+        if ((len > 2) && (_u8ResponseBufferIndex + len < _u8ReadStrBufferMaxSize))
+        {
+          if (_u8ResponseBufferIndex > 0)
+          {
+            _pu8ReadStrBuffer[_u8ResponseBufferIndex++] = ' ';
+          }
+          memcpy(_pu8ReadStrBuffer + _u8ResponseBufferIndex, u8ModbusADU + u8RDInextObjSzIdx + 1, len);
+          _u8ResponseBufferIndex += len;
+          _pu8ReadStrBuffer[_u8ResponseBufferIndex] = 0;
+        }
+        u8RDInextObjSzIdx += len + 2;
+        *_pu8ReadStrSize = _u8ResponseBufferIndex;
+      }
+      break;
     }
   }
-  
+
   _u8TransmitBufferIndex = 0;
   u16TransmitBufferLength = 0;
   _u8ResponseBufferIndex = 0;
