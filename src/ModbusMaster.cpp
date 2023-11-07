@@ -736,6 +736,11 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
+
+  /*  while (_tx_buffer->_iHead != _tx_buffer->_iTail); //wait for transmit data to be sent
+  // Wait for transmission to complete
+  while ((_pUart->UART_SR & UART_SR_TXEMPTY) != UART_SR_TXEMPTY)
+   ;*/
   if (_postTransmission)
   {
     _postTransmission();
@@ -776,6 +781,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       if (_idle)
       {
         _idle();
+        if (_serial->available()) continue;
       }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, false);
@@ -1010,6 +1016,7 @@ uint8_t ModbusMaster::ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8Modbus
       if (_idle)
       {
         _idle();
+        if (_serial->available()) continue;
       }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, false);
