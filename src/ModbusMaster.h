@@ -55,7 +55,7 @@ Set to 1 to enable debugging features within class:
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 // functions to calculate Modbus Application Data Unit CRC
-#include "util/crc16.h"
+#include "util/crc16_.h"
 
 // functions to manipulate words
 #include "util/word.h"
@@ -216,6 +216,7 @@ class ModbusMaster
     uint8_t  maskWriteRegister(uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t);
+    uint8_t  ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8ModbusADUSize, uint8_t u8BytesLeft);
     
   private:
     Stream* _serial;                                             ///< reference to serial port object
