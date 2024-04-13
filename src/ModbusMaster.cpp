@@ -216,6 +216,29 @@ void ModbusMaster::postTransmission(void (*postTransmission)())
   _postTransmission = postTransmission;
 }
 
+/**
+Function extends the preTransmission functionality, and we can now
+inherit the class and override this method.
+
+@see ModbusMaster::ModbusMasterTransaction()
+@see ModbusMaster::preTransmission()
+*/
+void ModbusMaster::preTransmission() {
+	if (_preTransmission)
+		_preTransmission();
+}
+
+/**
+Function extends the postTransmission functionality, and we can now
+inherit the class and override this method.
+
+@see ModbusMaster::ModbusMasterTransaction()
+@see ModbusMaster::postTransmission()
+*/
+void ModbusMaster::postTransmission() {
+	if (_postTransmission)
+		_postTransmission();
+}
 
 /**
 Retrieve data from response buffer.
@@ -705,10 +728,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   while (_serial->read() != -1);
 
   // transmit request
-  if (_preTransmission)
-  {
-    _preTransmission();
-  }
+  preTransmission();
   for (i = 0; i < u8ModbusADUSize; i++)
   {
     _serial->write(u8ModbusADU[i]);
@@ -716,10 +736,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
-  if (_postTransmission)
-  {
-    _postTransmission();
-  }
+  postTransmission();
   
   // loop until we run out of time or bytes, or an error occurs
   u32StartTime = millis();

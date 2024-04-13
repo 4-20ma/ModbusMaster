@@ -75,6 +75,8 @@ class ModbusMaster
     void idle(void (*)());
     void preTransmission(void (*)());
     void postTransmission(void (*)());
+    virtual void preTransmission();
+    virtual void postTransmission();
 
     // Modbus exception codes
     /**
