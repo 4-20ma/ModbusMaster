@@ -46,7 +46,14 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  ku8MaxBufferSize=ku8DefMaxBufferSize;
+  _u16ResponseBuffer=_u16DefResponseBuffer;
+
 }
+
+#ifndef debugSerialPort
+#define debugSerialPort Serial
+#endif
 
 /**
 Initialize class object.
@@ -100,7 +107,7 @@ uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
 void ModbusMaster::sendBit(bool data)
 {
   uint8_t txBitIndex = u16TransmitBufferLength % 16;
-  if ((u16TransmitBufferLength >> 4) < ku8MaxBufferSize)
+  if ((u16TransmitBufferLength >> 4) < ku8DefMaxBufferSize)
   {
     if (0 == txBitIndex)
     {
@@ -115,7 +122,7 @@ void ModbusMaster::sendBit(bool data)
 
 void ModbusMaster::send(uint16_t data)
 {
-  if (_u8TransmitBufferIndex < ku8MaxBufferSize)
+  if (_u8TransmitBufferIndex < ku8DefMaxBufferSize)
   {
     _u16TransmitBuffer[_u8TransmitBufferIndex++] = data;
     u16TransmitBufferLength = _u8TransmitBufferIndex << 4;
@@ -266,7 +273,7 @@ Place data in transmit buffer.
 */
 uint8_t ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
 {
-  if (u8Index < ku8MaxBufferSize)
+  if (u8Index < ku8DefMaxBufferSize)
   {
     _u16TransmitBuffer[u8Index] = u16Value;
     return ku8MBSuccess;
@@ -288,7 +295,7 @@ void ModbusMaster::clearTransmitBuffer()
 {
   uint8_t i;
   
-  for (i = 0; i < ku8MaxBufferSize; i++)
+  for (i = 0; i < ku8DefMaxBufferSize; i++)
   {
     _u16TransmitBuffer[i] = 0;
   }
@@ -709,13 +716,34 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   {
     _preTransmission();
   }
+
+  #ifdef MODBUS_DEBUG       
+  debugSerialPort.println();
+  #endif
+  
   for (i = 0; i < u8ModbusADUSize; i++)
   {
     _serial->write(u8ModbusADU[i]);
+    
+   #ifdef MODBUS_DEBUG       
+    if (u8ModbusADU[i]<15) debugSerialPort.print("0");    
+    debugSerialPort.print (u8ModbusADU[i],HEX);
+    debugSerialPort.print(">");
+   #endif
+    
   }
+  
+ #ifdef MODBUS_DEBUG       
+ debugSerialPort.println();
+ #endif
   
   u8ModbusADUSize = 0;
   _serial->flush();    // flush transmit buffer
+
+  /*  while (_tx_buffer->_iHead != _tx_buffer->_iTail); //wait for transmit data to be sent
+  // Wait for transmission to complete
+  while ((_pUart->UART_SR & UART_SR_TXEMPTY) != UART_SR_TXEMPTY)
+   ;*/
   if (_postTransmission)
   {
     _postTransmission();
@@ -726,12 +754,24 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   while (u8BytesLeft && !u8MBStatus)
   {
     if (_serial->available())
-    {
+    { uint8_t ch;
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
 #endif
-      u8ModbusADU[u8ModbusADUSize++] = _serial->read();
-      u8BytesLeft--;
+      ch  = _serial->read();
+
+#ifdef MODBUS_DEBUG       
+          if (ch<15) debugSerialPort.print("0");
+          debugSerialPort.print (ch,HEX);
+          debugSerialPort.print("<");
+#endif
+          
+      
+      if ((ch == _u8MBSlave) || u8ModbusADUSize)
+        {
+        u8ModbusADU[u8ModbusADUSize++]=ch;
+        u8BytesLeft--;
+        }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
 #endif
@@ -744,6 +784,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
       if (_idle)
       {
         _idle();
+        if (_serial->available()) continue;
       }
 #if __MODBUSMASTER_DEBUG__
       digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, false);
@@ -753,13 +794,6 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
     // evaluate slave ID, function code once enough bytes have been read
     if (u8ModbusADUSize == 5)
     {
-      // verify response is for correct Modbus slave
-      if (u8ModbusADU[0] != _u8MBSlave)
-      {
-        u8MBStatus = ku8MBInvalidSlaveID;
-        break;
-      }
-      
       // verify response is for correct Modbus function code (mask exception bit 7)
       if ((u8ModbusADU[1] & 0x7F) != u8MBFunction)
       {
@@ -874,3 +908,162 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
   _u8ResponseBufferIndex = 0;
   return u8MBStatus;
 }
+
+/**
+Modbus-like protocols transaction engine.
+Sequence:
+  - calculate CRC
+  - transmit buffer  over selected serial port + CRC
+  - wait for/retrieve response
+  - return status (success/exception)
+
+@param u8ModbusADU - pointer to buffer
+@param u8ModbusADUSize - request  size 
+@param u8BytesLeft - how many bytes to be collected back (include CRC) - should be less then buffer size
+@return 0 on success; exception number on failure
+
+*/
+uint8_t ModbusMaster::ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8ModbusADUSize, uint8_t u8BytesLeft )
+{
+
+  uint16_t u16CRC;
+  uint32_t u32StartTime;
+
+  uint8_t u8MBStatus = ku8MBSuccess;
+  u8ModbusADU[0] = _u8MBSlave;
+  // calculate CRC
+  u16CRC = 0xFFFF;
+  for (uint8_t i = 0; i < u8ModbusADUSize; i++)
+  {
+    u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
+  }
+
+  // flush receive buffer before transmitting request
+  while (_serial->read() != -1);
+
+  // transmit request
+  if (_preTransmission)
+  {
+    _preTransmission();
+  }
+
+  #ifdef MODBUS_DEBUG       
+  debugSerialPort.println();
+  #endif
+  
+  for (uint8_t i = 0; i < u8ModbusADUSize; i++)
+  {
+    _serial->write(u8ModbusADU[i]);
+    
+   #ifdef MODBUS_DEBUG       
+    if (u8ModbusADU[i]<15) debugSerialPort.print("0");    
+    debugSerialPort.print (u8ModbusADU[i],HEX);
+    debugSerialPort.print(">");
+   #endif
+    
+  }
+   _serial->write(lowByte(u16CRC));
+   _serial->write(highByte(u16CRC)); 
+
+  #ifdef MODBUS_DEBUG       
+    if (lowByte(u16CRC)<15) debugSerialPort.print("0");    
+    debugSerialPort.print (lowByte(u16CRC),HEX);
+    
+    if (highByte(u16CRC)<15) debugSerialPort.print("0");    
+    debugSerialPort.print (highByte(u16CRC),HEX);
+    debugSerialPort.print(">");
+
+    debugSerialPort.println();
+   #endif 
+   
+  
+  u8ModbusADUSize = 0;
+  _serial->flush();    // flush transmit buffer
+  if (_postTransmission)
+  {
+    _postTransmission();
+  }
+  
+  // loop until we run out of time or bytes, or an error occurs
+  u32StartTime = millis();
+  while (u8BytesLeft && !u8MBStatus)
+  {
+    if (_serial->available())
+    { uint8_t ch;
+#if __MODBUSMASTER_DEBUG__
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, true);
+#endif
+      ch  = _serial->read();
+
+#ifdef MODBUS_DEBUG       
+          if (ch<15) debugSerialPort.print("0");
+          debugSerialPort.print (ch,HEX);
+          debugSerialPort.print("<");
+#endif
+          
+      
+      if ((ch == _u8MBSlave) || u8ModbusADUSize)
+        {
+        u8ModbusADU[u8ModbusADUSize++]=ch;
+        u8BytesLeft--;
+        }
+#if __MODBUSMASTER_DEBUG__
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_A__, false);
+#endif
+    }
+    else
+    {
+#if __MODBUSMASTER_DEBUG__
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, true);
+#endif
+      if (_idle)
+      {
+        _idle();
+        if (_serial->available()) continue;
+      }
+#if __MODBUSMASTER_DEBUG__
+      digitalWrite(__MODBUSMASTER_DEBUG_PIN_B__, false);
+#endif
+    }
+ 
+    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    {
+      u8MBStatus = ku8MBResponseTimedOut;
+    }
+  }
+  
+  // verify response is large enough to inspect further
+  if (!u8MBStatus && u8ModbusADUSize >= 4)
+  {
+    // calculate CRC
+    u16CRC = 0xFFFF;
+    for (uint8_t i = 0; i < (u8ModbusADUSize - 2); i++)
+    {
+      u16CRC = crc16_update(u16CRC, u8ModbusADU[i]);
+    }
+    
+    // verify CRC
+    if (!u8MBStatus && (lowByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 2] ||
+      highByte(u16CRC) != u8ModbusADU[u8ModbusADUSize - 1]))
+    {
+      u8MBStatus = ku8MBInvalidCRC;
+    }
+  }
+
+  _u8TransmitBufferIndex = 0;
+  u16TransmitBufferLength = 0;
+  _u8ResponseBufferIndex = 0;
+  return u8MBStatus;
+}
+    void ModbusMaster::setResponseBuffer(uint16_t *bufPtr,size_t bufLen)
+    {
+     ku8MaxBufferSize=bufLen;
+     _u16ResponseBuffer=bufPtr;
+
+    }
+
+    void ModbusMaster::setDefaultResponseBuffer()
+    {
+      ku8MaxBufferSize=ku8DefMaxBufferSize;
+      _u16ResponseBuffer=_u16DefResponseBuffer;
+    }

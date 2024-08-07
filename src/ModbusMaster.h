@@ -55,7 +55,7 @@ Set to 1 to enable debugging features within class:
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
 // functions to calculate Modbus Application Data Unit CRC
-#include "util/crc16.h"
+#include "util/crc16_.h"
 
 // functions to manipulate words
 #include "util/word.h"
@@ -216,17 +216,23 @@ class ModbusMaster
     uint8_t  maskWriteRegister(uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t, uint16_t, uint16_t);
     uint8_t  readWriteMultipleRegisters(uint16_t, uint16_t);
-    
+    uint8_t  ModbusRawTransaction(uint8_t *u8ModbusADU,uint8_t u8ModbusADUSize, uint8_t u8BytesLeft);
+    void setResponseBuffer(uint16_t *bufPtr,size_t bufLen);
+    void setDefaultResponseBuffer();
+
   private:
     Stream* _serial;                                             ///< reference to serial port object
     uint8_t  _u8MBSlave;                                         ///< Modbus slave (1..255) initialized in begin()
-    static const uint8_t ku8MaxBufferSize                = 64;   ///< size of response/transmit buffers    
+
+    static const uint8_t ku8DefMaxBufferSize                = 64;   ///< size of response/transmit buffers    
+    uint8_t  ku8MaxBufferSize                             ;   
     uint16_t _u16ReadAddress;                                    ///< slave register from which to read
     uint16_t _u16ReadQty;                                        ///< quantity of words to read
-    uint16_t _u16ResponseBuffer[ku8MaxBufferSize];               ///< buffer to store Modbus slave response; read via GetResponseBuffer()
+    uint16_t _u16DefResponseBuffer[ku8DefMaxBufferSize];               ///< buffer to store Modbus slave response; read via GetResponseBuffer()
+    uint16_t *_u16ResponseBuffer; 
     uint16_t _u16WriteAddress;                                   ///< slave register to which to write
-    uint16_t _u16WriteQty;                                       ///< quantity of words to write
-    uint16_t _u16TransmitBuffer[ku8MaxBufferSize];               ///< buffer containing data to transmit to Modbus slave; set via SetTransmitBuffer()
+    uint16_t _u16WriteQty;                                       //< quantity of words to write
+    uint16_t _u16TransmitBuffer[ku8DefMaxBufferSize];               ///< buffer containing data to transmit to Modbus slave; set via SetTransmitBuffer()
     uint16_t* txBuffer; // from Wire.h -- need to clean this up Rx
     uint8_t _u8TransmitBufferIndex;
     uint16_t u16TransmitBufferLength;
@@ -260,6 +266,8 @@ class ModbusMaster
     void (*_preTransmission)();
     // postTransmission callback function; gets called after a Modbus message has been sent
     void (*_postTransmission)();
+
+
 };
 #endif
 
