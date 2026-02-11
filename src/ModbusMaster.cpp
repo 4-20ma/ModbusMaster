@@ -74,6 +74,12 @@ void ModbusMaster::begin(uint8_t slave, Stream &serial)
 }
 
 
+void ModbusMaster::setResponseTimeout(uint16_t ms)
+{
+  _u16ResponseTimeoutMs = ms;
+}
+
+
 void ModbusMaster::beginTransmission(uint16_t u16Address)
 {
   _u16WriteAddress = u16Address;

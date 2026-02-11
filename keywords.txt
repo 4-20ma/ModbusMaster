@@ -17,6 +17,7 @@ highWord	KEYWORD2
 LONG	KEYWORD2
 
 begin	KEYWORD2
+setResponseTimeout	KEYWORD2
 
 getResponseBuffer	KEYWORD2
 clearResponseBuffer	KEYWORD2
