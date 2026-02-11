@@ -35,6 +35,8 @@ Registers
 
 Both full-duplex and half-duplex RS232/485 transceivers are supported. Callback functions are provided to toggle Data Enable (DE) and Receiver Enable (/RE) pins.
 
+The response timeout (default 2000 ms) can be set with `setResponseTimeout(ms)` after `begin()`, e.g. to fail sooner when no slave is present.
+
 
 ## Installation
 

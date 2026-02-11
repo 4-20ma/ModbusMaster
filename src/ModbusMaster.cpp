@@ -46,6 +46,7 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _u16ResponseTimeoutMs = ku16MBResponseTimeout;
 }
 
 /**
@@ -70,6 +71,12 @@ void ModbusMaster::begin(uint8_t slave, Stream &serial)
   pinMode(__MODBUSMASTER_DEBUG_PIN_A__, OUTPUT);
   pinMode(__MODBUSMASTER_DEBUG_PIN_B__, OUTPUT);
 #endif
+}
+
+
+void ModbusMaster::setResponseTimeout(uint16_t ms)
+{
+  _u16ResponseTimeoutMs = ms;
 }
 
 
@@ -797,7 +804,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if ((millis() - u32StartTime) > _u16ResponseTimeoutMs)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
