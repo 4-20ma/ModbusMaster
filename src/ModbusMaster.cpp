@@ -46,6 +46,7 @@ ModbusMaster::ModbusMaster(void)
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
+  _u16ResponseTimeoutMs = ku16MBResponseTimeout;
 }
 
 /**
@@ -797,7 +798,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
           break;
       }
     }
-    if ((millis() - u32StartTime) > ku16MBResponseTimeout)
+    if ((millis() - u32StartTime) > _u16ResponseTimeoutMs)
     {
       u8MBStatus = ku8MBResponseTimedOut;
     }
